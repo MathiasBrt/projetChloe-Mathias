@@ -1,0 +1,6 @@
+( something ( another ) ( aSymbol  ( 	#\a a 56 	) ) )
+( aSymbol  ( 	( nested ) 	#\a 56 	) )
+( aSymbol 	( 	( nested ) 		#\a 56  ( ploouf ) 	) )
+( lambda ( X ) ( * X 2 ) )
+( define ( fun arg1 arg2 )   ( + arg1 ( 7 arg2 ) ) )
+((( a (b ( c) ) ) ) )

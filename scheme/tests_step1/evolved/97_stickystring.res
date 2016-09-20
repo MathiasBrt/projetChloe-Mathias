@@ -1,0 +1,6 @@
+==> ("ceci est une chaine" 5)
+==> (5 "ceci est une chaine")
+==> ("ceci est une chaine" "ca aussi")
+==> ("ceci est une chaine" 5)
+==> (5 "ceci est une chaine")
+==> ("ceci est une chaine" "ca aussi")
