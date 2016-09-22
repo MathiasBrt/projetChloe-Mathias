@@ -294,7 +294,7 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
 
 
 object sfs_read( char *input, uint *here ) {
-    if ( input[*here] == ' ' ) (*here)++;
+    while ( input[*here] == ' ' ) (*here)++;
     if ( input[*here] == '(' ) {
         if ( input[(*here)+1] == ')' ) {
             *here += 2;
@@ -399,6 +399,10 @@ object sfs_read_atom( char *input, uint *here ) {
     /* lecture d'un +, d'un - ou d'un chiffre */
     if (ascii==43 || ascii==45 || (ascii>= 48 && ascii<=57))
     {
+    	string nombre_recupere;
+    	int i=0;
+    	nombre_recupere[i]=input[*here];
+    	i++;
         (*here)++;
         while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=41)
         {
@@ -408,10 +412,12 @@ object sfs_read_atom( char *input, uint *here ) {
                 WARNING_MSG( "Ce n'est pas un nombre" ); 
                 return NULL;
             } 
+        nombre_recupere[i]=input[*here];
+        i++;
         (*here)++;    
         }
             num nombre;
-            nombre.this.integer=atoi(input);
+            nombre.this.integer=atoi(nombre_recupere);
             atom = make_object( SFS_NUMBER ) ; 
             atom->this.number=nombre;
             return atom;
@@ -419,11 +425,8 @@ object sfs_read_atom( char *input, uint *here ) {
 
     /* autre cas : lecture d'un caractère isolé */
     else {
-        int parenthese;
         atom=make_object(SFS_SYMBOL);
-        while((*here)<strlen(input) && input[*here]!=' ' && parenthese<=0){
-            if (input[*here]=='(') parenthese--;
-            if (input[*here]==')') parenthese++;
+        while((*here)<strlen(input) && input[*here]!=' ' && input[*here]!=')'){
             buffer[buffer_counter]=input[*here];
             buffer_counter++;
             (*here)++;
@@ -441,10 +444,10 @@ object sfs_read_pair( char *input, uint *here ) {
     pair = make_object(SFS_PAIR);
     pair->this.pair.cdr=nil;
     pair->this.pair.car=nil;
-    printf("\ncar: %p\ncdr: %p\n",pair->this.pair.car,pair->this.pair.cdr);
-    pair->this.pair.car=sfs_read(input,here); printf("\ncar: %p\ncontenu: %d\ncdr: %p\n",pair->this.pair.car,pair->this.pair.car->this.boolean,pair->this.pair.cdr);
+    pair->this.pair.car=sfs_read(input,here);
+    while (input[*here]==' ') (*here)++;
     if (input[*here]!=')'){
-    	while (input[*here]==' ') (*here)++;
+    	
     	pair->this.pair.cdr=sfs_read_pair(input,here);
     	return pair;
    	}

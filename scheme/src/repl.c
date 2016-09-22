@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+extern int premiere_parenthese;
 
 #include "object.h"
 #include "read.h"
@@ -148,7 +148,7 @@ int main ( int argc, char *argv[] ) {
         }
 
         printf( "==> " );
-        sfs_print( output );
+        sfs_print( output ); premiere_parenthese=0;
         printf( "\n" );
     }
 
