@@ -41,7 +41,7 @@ void sfs_print_atom( object o ) {
 
 void sfs_print_pair( object o ) {
     sfs_print(o->this.pair.car);printf(" ");
-    sfs_print(o->this.pair.cdr);printf(" ");
+    sfs_print(o->this.pair.cdr);
     return;
 }
 
