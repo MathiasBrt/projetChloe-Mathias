@@ -293,6 +293,15 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
 }
 
 
+/*
+ * Effectue la décomposition analytique de l'entrée input.
+ * Cette fonction ne conserve aucune information autre que les atomes et les paires : pas de mémorisation de
+ * parenthèses ni d'espaces et tabulations.
+ * Cette fonction et sfs_read_pair s'appellent mutuellement.
+ * Si on lit un couple de parentheses, l'objet nil est retourné.
+ * Si on lit une parenthese ouvrante, sfs_read_pair est appelée.
+ * Sinon, c'est sfs_read_atom.
+ */
 object sfs_read( char *input, uint *here ) {
     while ( input[*here] == ' ' || (int)input[*here]==9) (*here)++;
     if ( input[*here] == '(' ) {
@@ -313,6 +322,14 @@ object sfs_read( char *input, uint *here ) {
         return sfs_read_atom( input, here );
     }
 }
+
+
+/*
+ * Cette fonction parcourt l'entrée input jusqu'à la lecture d'un atome complet. Elle est appelée par sfs_read.
+ * Le premier caractere lu donne une indication sur le type à chercher. Le code ASCII est utilisé pour l'analogie
+ * entre les entiers et les caracteres.
+ * À la fin d'une lecture, here pointe sur le caractere de input qui suit l'atome lu.
+ */
 
 object sfs_read_atom( char *input, uint *here ) {
 
@@ -367,19 +384,19 @@ object sfs_read_atom( char *input, uint *here ) {
 
     /* lecture de " */
     if (ascii==34){
-        (*here)++; /* necessaire pour ne pas sortir au if suivant */
+        (*here)++;
         while(*here<strlen(input)){
             buffer[buffer_counter]=input[*here];
             if (input[*here]=='\\') echappement++;
             if (input[*here]!='\\' && echappement) echappement--; 
-            if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]!='\\'){ /* si " non echappee */
+            if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]!='\\'){ /* si guillemets non echappees */
                 atom=make_object(SFS_STRING);
                 buffer[buffer_counter]='\0';
                 strncpy(atom->this.string,buffer,strlen(buffer));
                 (*here)++;
                 return atom;
             }
-            else if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]=='\\'){ /* si " echappee */
+            else if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]=='\\'){ /* si guillemets echappees */
                 if (!echappement){
                     buffer_counter--;
                     buffer[buffer_counter]='"';
@@ -424,7 +441,7 @@ object sfs_read_atom( char *input, uint *here ) {
             return atom;
     }
 
-    /* autre cas : lecture d'un caractère isolé */
+    /* autre cas : lecture d'un caractère isolé i.e. un symbole */
     else {
         atom=make_object(SFS_SYMBOL);
         while((*here)<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
@@ -438,6 +455,16 @@ object sfs_read_atom( char *input, uint *here ) {
     }
     return NULL;
 }
+
+
+/*
+ * Cette fonction est appelée par elle-même ou par sfs_read.
+ * Elle crée une paire dont le car et le cdr sont nil. Le car est actualisé par sfs_read (et est donc un atome lu
+ * par sfs_read_atom, ou une paire lue par sfs_read_pair). Le cdr est nécessairement une paire actualisée par 
+ * sfs_read_pair.
+ * Cette fonction ne garde mémoire d'aucun espace ou tabulation.
+ * À la fin, here pointe sur le caractere qui suit une parenthese fermante (fin d'une paire).
+ */
 
 object sfs_read_pair( char *input, uint *here ) {
 

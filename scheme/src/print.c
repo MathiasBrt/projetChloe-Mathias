@@ -9,8 +9,14 @@
  */
 
 #include "print.h"
-int premiere_parenthese=0;
+int premiere_parenthese=0; /* Utilisation d'une variable globale pour la gestion de la première parenthese */
 #include <stdio.h>
+
+
+/*
+ * Cette fonction est appelée par sfs_print.
+ * Elle vérifie le type de l'objet en paramètre et met en forme l'expression à afficher (avec la syntaxe de SCHEME).
+ */
 
 void sfs_print_atom( object o ) {
     switch (o->type){
@@ -18,8 +24,7 @@ void sfs_print_atom( object o ) {
             /*printf("booleen:  ");*/
             (o->this.boolean) ? printf("#t"):printf("#f"); break;
         case SFS_CHARACTER:
-            /*printf("lettre: ");*/
-            
+            /*printf("lettre: ");*/ 
             if(o->this.character==32) printf("#\\space");
             else if(o->this.character==10) printf("#\\newline");
             else printf("#\\%c",o->this.character); break;
@@ -32,9 +37,6 @@ void sfs_print_atom( object o ) {
         case SFS_STRING:
             /*printf("chaine: ");*/
             printf("\"%s\"",o->this.string); break;
-        /*case SFS_PAIR:
-            printf("pair: ");
-            printf("car: %p\ncdr: %p\n",o->this.pair.car,o->this.pair.cdr); break;*/
         case SFS_NIL:
         	printf(")"); break;
             
@@ -42,12 +44,26 @@ void sfs_print_atom( object o ) {
     return;
 }
 
+
+/*
+ * Cette fonction est appelée par sfs_print.
+ * Elle rappelle sfs_print pour le car de l'objet et pour le cdr.
+ * Pour gérer la mise en forme de la sortie, un espace est affiché après chaque car. Si l'on est en bout de paire 
+ * (cdr de type SFS_NIL), on se prépare à écrire par-dessus cet espace.
+ */
+
 void sfs_print_pair( object o ) {
     sfs_print(o->this.pair.car);printf(" ");
     if (o->this.pair.cdr->type==SFS_NIL) printf("\b");
     sfs_print(o->this.pair.cdr);
     return;
 }
+
+
+/*
+ * Cette fonction et sfs_print_pair s'appellent mutuellement.
+ * Elle gère l'affichage des parenthèses ouvrantes.
+ */
 
 void sfs_print( object o ) {
 	static int parenthese=0;
@@ -63,7 +79,5 @@ void sfs_print( object o ) {
     else {
         sfs_print_atom( o ); 
         if(o->type==SFS_NIL) parenthese--;
-        
-       
     }
 }

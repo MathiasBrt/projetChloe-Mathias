@@ -17,7 +17,7 @@ extern "C" {
 
 #include "number.h"
 
-typedef enum bool{
+typedef enum bool{ /* une définition pour la gestion des booléens */
     t=1,
     f=0
 } BOOL;
