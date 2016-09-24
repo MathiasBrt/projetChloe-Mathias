@@ -16,10 +16,13 @@ void sfs_print_atom( object o ) {
     switch (o->type){
         case SFS_BOOLEAN:
             /*printf("booleen:  ");*/
-            printf("%d",o->this.boolean); break;
+            (o->this.boolean) ? printf("#t"):printf("#f"); break;
         case SFS_CHARACTER:
             /*printf("lettre: ");*/
-            printf("%c",o->this.character); break;
+            
+            if(o->this.character==32) printf("#\\space");
+            else if(o->this.character==10) printf("#\\newline");
+            else printf("#\\%c",o->this.character); break;
         case SFS_NUMBER:
             /*printf("nombre: ");*/
             printf("%d",o->this.number.this.integer); break;
@@ -28,7 +31,7 @@ void sfs_print_atom( object o ) {
             printf("%s",o->this.symbol); break;
         case SFS_STRING:
             /*printf("chaine: ");*/
-            printf("%s",o->this.string); break;
+            printf("\"%s\"",o->this.string); break;
         /*case SFS_PAIR:
             printf("pair: ");
             printf("car: %p\ncdr: %p\n",o->this.pair.car,o->this.pair.cdr); break;*/
@@ -41,6 +44,7 @@ void sfs_print_atom( object o ) {
 
 void sfs_print_pair( object o ) {
     sfs_print(o->this.pair.car);printf(" ");
+    if (o->this.pair.cdr->type==SFS_NIL) printf("\b");
     sfs_print(o->this.pair.cdr);
     return;
 }
@@ -51,9 +55,9 @@ void sfs_print( object o ) {
     if ( SFS_PAIR == o->type ) {
     	if (!premiere_parenthese){
     		premiere_parenthese++;
-    		printf("( ");
+    		printf("(");
     	} 
-    	if (o->this.pair.car->type==SFS_PAIR) {parenthese++; printf("( ");}
+    	if (o->this.pair.car->type==SFS_PAIR) {parenthese++; printf("(");}
         sfs_print_pair( o );
     }
     else {
