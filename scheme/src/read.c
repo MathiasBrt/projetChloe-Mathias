@@ -294,14 +294,15 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
 
 
 object sfs_read( char *input, uint *here ) {
-    while ( input[*here] == ' ' ) (*here)++;
+    while ( input[*here] == ' ' || (int)input[*here]==9) (*here)++;
     if ( input[*here] == '(' ) {
-        if ( input[(*here)+1] == ')' ) {
-            *here += 2;
+    	(*here)++;
+    	while ( input[*here] == ' ' || (int)input[*here]==9 ) (*here)++;
+        if ( input[(*here)] == ')' ) {
+            *here += 1;
             return nil;
         }
         else {
-            (*here)++;
             return sfs_read_pair( input, here );
         }
     }
@@ -325,7 +326,7 @@ object sfs_read_atom( char *input, uint *here ) {
     if (ascii==35){
         if (input[((*here)+1)]=='t' || input[((*here)+1)]=='f'){
             (*here)+=2;
-            if(input[(*here)]=='\0' || input[(*here)]==' ' || input[*(here)]==')'){
+            if(input[(*here)]=='\0' || input[(*here)]==' ' || (int)input[(*here)]==9 || input[*(here)]==')'){
                 atom = make_object(SFS_BOOLEAN);
                 atom->this.boolean= (input[(*here)-1]=='t') ? TRUE:FALSE;
             }
@@ -336,7 +337,7 @@ object sfs_read_atom( char *input, uint *here ) {
             int parenthese=0;
             atom = make_object(SFS_CHARACTER);
             (*here)+=2;
-            while(*here<strlen(input) && input[*here]!=' ' && !parenthese){
+            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && !parenthese){
                  if (input[*here]==')') parenthese++;
                  buffer[buffer_counter]=input[*here];
                  buffer_counter++;
@@ -404,7 +405,7 @@ object sfs_read_atom( char *input, uint *here ) {
     	nombre_recupere[i]=input[*here];
     	i++;
         (*here)++;
-        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=41)
+        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41)
         {
             if((int)input[(*here)]< 48 || (int)input[(*here)]>57)
             {
@@ -426,7 +427,7 @@ object sfs_read_atom( char *input, uint *here ) {
     /* autre cas : lecture d'un caractère isolé */
     else {
         atom=make_object(SFS_SYMBOL);
-        while((*here)<strlen(input) && input[*here]!=' ' && input[*here]!=')'){
+        while((*here)<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
             buffer[buffer_counter]=input[*here];
             buffer_counter++;
             (*here)++;
@@ -445,7 +446,7 @@ object sfs_read_pair( char *input, uint *here ) {
     pair->this.pair.cdr=nil;
     pair->this.pair.car=nil;
     pair->this.pair.car=sfs_read(input,here);
-    while (input[*here]==' ') (*here)++;
+    while (input[*here]==' ' || (int)input[*here]==9) (*here)++;
     if (input[*here]!=')'){
     	
     	pair->this.pair.cdr=sfs_read_pair(input,here);
