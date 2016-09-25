@@ -417,10 +417,8 @@ object sfs_read_atom( char *input, uint *here ) {
     /* lecture d'un +, d'un - ou d'un chiffre */
     if (ascii==43 || ascii==45 || (ascii>= 48 && ascii<=57))
     {
-    	string nombre_recupere;
-    	int i=0;
-    	nombre_recupere[i]=input[*here];
-    	i++;
+    	buffer[buffer_counter]=input[*here];
+    	buffer_counter++;
         (*here)++;
         while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41)
         {
@@ -430,12 +428,12 @@ object sfs_read_atom( char *input, uint *here ) {
                 WARNING_MSG( "Ce n'est pas un nombre" ); 
                 return NULL;
             } 
-        nombre_recupere[i]=input[*here];
-        i++;
+        buffer[buffer_counter]=input[*here];
+        buffer_counter++;
         (*here)++;    
         }
             num nombre;
-            nombre.this.integer=atoi(nombre_recupere);
+            nombre.this.integer=atoi(buffer);
             atom = make_object( SFS_NUMBER ) ; 
             atom->this.number=nombre;
             return atom;

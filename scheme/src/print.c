@@ -53,7 +53,8 @@ void sfs_print_atom( object o ) {
  */
 
 void sfs_print_pair( object o ) {
-    sfs_print(o->this.pair.car);printf(" ");
+    sfs_print(o->this.pair.car);
+    printf(" ");
     if (o->this.pair.cdr->type==SFS_NIL) printf("\b");
     sfs_print(o->this.pair.cdr);
     return;
@@ -66,18 +67,16 @@ void sfs_print_pair( object o ) {
  */
 
 void sfs_print( object o ) {
-	static int parenthese=0;
 	if (!premiere_parenthese && SFS_NIL==o->type) printf("(");
     if ( SFS_PAIR == o->type ) {
     	if (!premiere_parenthese){
     		premiere_parenthese++;
     		printf("(");
     	} 
-    	if (o->this.pair.car->type==SFS_PAIR) {parenthese++; printf("(");}
+    	if (o->this.pair.car->type==SFS_PAIR) printf("(");
         sfs_print_pair( o );
     }
     else {
         sfs_print_atom( o ); 
-        if(o->type==SFS_NIL) parenthese--;
     }
 }
