@@ -57,6 +57,15 @@ object make_nil( void );
 #define SFS_BOOLEAN      0x05
 #define SFS_SYMBOL       0x06
 
+#define cadr this.pair.cdr->this.pair.car
+#define caar this.pair.car->this.pair.car
+#define cdar this.pair.car->this.pair.cdr
+#define cddr this.pair.cdr->this.pair.cdr
+#define caddr cddr->this.pair.car
+#define cdddr cddr->this.pair.cdr
+#define cadddr cdddr->this.pair.car
+#define cddddr cdddr->this.pair.cdr
+
 
 extern object nil;
 
