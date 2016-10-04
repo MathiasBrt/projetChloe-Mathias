@@ -14,6 +14,13 @@ object sfs_eval( object input ) {
 	eval:
 	if(input->type==SFS_PAIR){
 		if(input->this.pair.car->type==SFS_SYMBOL){
+			if(strcmp(input->this.pair.car->this.symbol,"IF") || strcmp(input->this.pair.car->this.symbol,"AND") || strcmp(input->this.pair.car->this.symbol,"DEFINE") || strcmp(input->this.pair.car->this.symbol,"OR") || strcmp(input->this.pair.car->this.symbol,"SET!") || strcmp(input->this.pair.car->this.symbol,"QUOTE"))
+			{
+				WARNING_MSG("La forme est certainement en majuscule !");
+				return input;
+
+			}
+
 			if (strncmp(input->this.pair.car->this.symbol,"quote",5)==0){
 				input = input->cadr;
 				goto eval;
@@ -25,13 +32,13 @@ object sfs_eval( object input ) {
 				
 				if(predicat(input->cadr)  == 0) 
 				{
-					printf("Faux\n");
+					
 					et_logique->this.boolean= 0;
 					return et_logique;
 				}
 				if(predicat(input->caddr)  == 1)
 				{
-					printf( "Vrai\n");
+					
 					et_logique->this.boolean = 1;
 					return et_logique;
 				}
@@ -50,13 +57,13 @@ object sfs_eval( object input ) {
 				
 				if(predicat(input->cadr) == 1) 
 				{
-					printf("Vrai\n");
+					
 					et_logique->this.boolean= 1;
 					return et_logique;
 				}
 				if(predicat(input->caddr)  == 0)
 				{
-					printf( "Faux\n");
+					
 					et_logique->this.boolean = 0;
 					return et_logique;
 				}
