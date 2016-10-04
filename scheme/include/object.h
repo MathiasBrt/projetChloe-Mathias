@@ -39,10 +39,9 @@ typedef struct object_t {
             struct object_t *cdr;
         }                pair;
         struct object_t *special;
-        struct object_t *env_suiv;
-        struct object_t *var_suiv;
-
     } this;
+    struct object_t *env_suiv;
+    struct object_t *var_suiv;
 
 } *object;
 
@@ -57,6 +56,7 @@ object make_nil( void );
 #define SFS_NIL          0x04
 #define SFS_BOOLEAN      0x05
 #define SFS_SYMBOL       0x06
+#define SFS_ENVIRONNEMENT 0x07
 
 #define cadr this.pair.cdr->this.pair.car
 #define caar this.pair.car->this.pair.car

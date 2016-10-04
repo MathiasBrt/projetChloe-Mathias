@@ -19,6 +19,7 @@ extern int premiere_parenthese;
 #include "read.h"
 #include "eval.h"
 #include "print.h"
+#include "environnement.h"
 
 /* mode d'interaction avec l'interpreteur (exemple)*/
 typedef enum {INTERACTIF,SCRIPT} inter_mode;
@@ -85,6 +86,8 @@ int main ( int argc, char *argv[] ) {
         mode = SCRIPT;
     }
 
+	object env = init_top_level();
+	affiche_env(env);
 
     while ( 1 ) {
         input[0]='\0';
