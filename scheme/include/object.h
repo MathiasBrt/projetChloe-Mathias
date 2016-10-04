@@ -38,7 +38,7 @@ typedef struct object_t {
             struct object_t *car;
             struct object_t *cdr;
         }                pair;
-
+        struct object_t *special;
         struct object_t *env_suiv;
         struct object_t *var_suiv;
 
