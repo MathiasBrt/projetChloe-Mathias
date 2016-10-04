@@ -442,14 +442,36 @@ object sfs_read_atom( char *input, uint *here ) {
     /* autre cas : lecture d'un caractère isolé i.e. un symbole */
     else {
         atom=make_object(SFS_SYMBOL);
-        while((*here)<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
-            buffer[buffer_counter]=input[*here];
-            buffer_counter++;
-            (*here)++;
-        }
+
+        if((int)input[*here]==39 && (int)input[*here+1]==40)
+            {
+                char citation[256];
+                strcpy(citation,"(quote ");
+
+                while ((*here)<strlen(input))
+                {
+
+                    input[*here]=input[(*here)+1];
+                    (*here)++;                    
+                }
+                strcat(citation,input);
+                citation[strlen(citation)]=')';
+                
+                (*here)=0;
+                return sfs_read(citation,here);
+
+            }
+        else 
+        {   
+            while((*here)<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
+                buffer[buffer_counter]=input[*here];
+                buffer_counter++;
+                (*here)++;
+            }
         buffer[buffer_counter]='\0';
         strcpy(atom->this.symbol,buffer);
         return atom;
+        }
     }
     return NULL;
 }
