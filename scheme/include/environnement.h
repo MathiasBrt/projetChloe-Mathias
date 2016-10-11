@@ -12,12 +12,14 @@ extern "C" {
 object creer_env(void);
 BOOL est_vide_env(object env);
 void affiche_env(object env);
-object ajout_tete_env(object env);
+object ajout_queue_env(object env);
+object recherche_etiquette(object env, string etiquette);
 
 /* fonctions sur les variables */
 BOOL est_vide_var(object env);
+object recherche_env(object env, string variable);
 object recherche(object env, string variable);
-object ajout_tete_var(object env, object variable, object valeur);
+object ajout_queue_var(object env, object variable, object valeur);
 void affiche_var(object variable);
 
 /* fonction d'initialisation de l'environnement top level */

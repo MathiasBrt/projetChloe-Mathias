@@ -22,7 +22,7 @@ object sfs_eval( object input ) {
 			}
 
 			if (strncmp(input->this.pair.car->this.symbol,"quote",5)==0){
-				while (input->cdr != nil)
+				while (input->this.pair.cdr != nil)
 				{
 					
 					input = input->cadr;
