@@ -14,7 +14,7 @@ object sfs_eval( object input ) {
 	eval:
 	if(input->type==SFS_PAIR){
 		if(input->this.pair.car->type==SFS_SYMBOL){
-			if(strcmp(input->this.pair.car->this.symbol,"IF") || strcmp(input->this.pair.car->this.symbol,"AND") || strcmp(input->this.pair.car->this.symbol,"DEFINE") || strcmp(input->this.pair.car->this.symbol,"OR") || strcmp(input->this.pair.car->this.symbol,"SET!") || strcmp(input->this.pair.car->this.symbol,"QUOTE"))
+			if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
 			{
 				WARNING_MSG("La forme est certainement en majuscule !");
 				return input;
