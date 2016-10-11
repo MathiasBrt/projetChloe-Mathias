@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-extern int premiere_parenthese;
-
 #include "object.h"
 #include "read.h"
 #include "eval.h"
@@ -38,6 +36,9 @@ void init_interpreter ( void ) {
     nil      = make_nil();
 
 }
+
+extern int premiere_parenthese;
+object toplevel;
 
 int main ( int argc, char *argv[] ) {
 
@@ -72,7 +73,7 @@ int main ( int argc, char *argv[] ) {
     }
 
     init_interpreter();
-
+	toplevel = init_top_level();
     /*par defaut : mode shell interactif */
     fp = stdin;
     mode = INTERACTIF;
@@ -86,8 +87,7 @@ int main ( int argc, char *argv[] ) {
         mode = SCRIPT;
     }
 
-	object env = init_top_level();
-	affiche_env(env);
+
 
     while ( 1 ) {
         input[0]='\0';
