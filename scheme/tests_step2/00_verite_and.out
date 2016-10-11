@@ -1,0 +1,14 @@
+set! a la valeur 6
+define a la valeur 5
+quote a la valeur 4
+or a la valeur 3
+and a la valeur 2
+if a la valeur 1
+==> #f
+==> #f
+==> #f
+==> #f
+==> #f
+==> #t
+==> #t
+==> #t

@@ -9,5 +9,6 @@
 (and #t #f)
 (and x #f)		
 (and #t #t)
-(and x #t)	
-(and x x)			
+(and x #t) 
+(and x x) 
+		
