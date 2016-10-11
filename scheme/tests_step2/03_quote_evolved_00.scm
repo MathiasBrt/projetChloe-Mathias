@@ -15,5 +15,3 @@
 
 
 Bonjour)
-(quote Bonjour) (quote '12345) (quote #t)
-'Bonjour 'Bonjour '12345 '#t

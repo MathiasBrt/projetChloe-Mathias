@@ -54,8 +54,8 @@ void sfs_print_atom( object o ) {
 
 void sfs_print_pair( object o ) {
     sfs_print(o->this.pair.car);
+    if (o->this.pair.cdr->type!=SFS_NIL)
     printf(" ");
-    if (o->this.pair.cdr->type==SFS_NIL) printf("\b");
     sfs_print(o->this.pair.cdr);
     return;
 }

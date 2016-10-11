@@ -22,8 +22,13 @@ object sfs_eval( object input ) {
 			}
 
 			if (strncmp(input->this.pair.car->this.symbol,"quote",5)==0){
-				input = input->cadr;
-				goto eval;
+				while (input->cdr != nil)
+				{
+					
+					input = input->cadr;
+					
+					return input;
+				}
 			}
 			if(strncmp(input->this.pair.car->this.symbol,"and",3)==0)
 			{

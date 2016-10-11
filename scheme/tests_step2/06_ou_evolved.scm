@@ -4,8 +4,6 @@
 ;———
 
 (or (or #f #f)	#f)
-(or( or (or #f #t) #t) #f)	
-12345 (or #f x) 
-12345 (or #t #f) #\B #\newline  				12345	    	   (or #t #f) 	 	 	 	#\newline		
+(or( or (or #f #t) #t) #f)		
 (quote (or #t #f))
-('(or #t #f))
+'(or #t #f)

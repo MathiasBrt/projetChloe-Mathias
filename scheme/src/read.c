@@ -443,7 +443,7 @@ object sfs_read_atom( char *input, uint *here ) {
     else {
         atom=make_object(SFS_SYMBOL);
 
-        if((int)input[*here]==39 && (int)input[*here+1]==40)
+        if((int)input[*here]==39)
             {
                 char citation[256];
                 strcpy(citation,"(quote ");
