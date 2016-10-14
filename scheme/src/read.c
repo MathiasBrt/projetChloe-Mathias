@@ -351,11 +351,11 @@ object sfs_read_atom( char *input, uint *here ) {
             return atom;
         }
         if (input[((*here)+1)=='\\']){
-            int parenthese=0;
+            
             atom = make_object(SFS_CHARACTER);
             (*here)+=2;
-            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && !parenthese){
-                 if (input[*here]==')') parenthese++;
+            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
+                 
                  buffer[buffer_counter]=input[*here];
                  buffer_counter++;
                  (*here)++;

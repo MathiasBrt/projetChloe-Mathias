@@ -9,9 +9,18 @@
  */
 
 #include "eval.h"
+#include "object.h"
+#include "environnement.h"
+
+object toplevel;
 
 object sfs_eval( object input ) {
+	
+	object env_courant=creer_env();
+	env_courant=toplevel;
+
 	eval:
+	
 	if(input->type==SFS_PAIR){
 		if(input->this.pair.car->type==SFS_SYMBOL){
 			if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
@@ -22,7 +31,7 @@ object sfs_eval( object input ) {
 			}
 
 			if (strncmp(input->this.pair.car->this.symbol,"quote",5)==0){
-				while (input->this.pair.cdr != nil)
+				while (input->this.pair.cdr->type != SFS_NIL)
 				{
 					
 					input = input->cadr;
@@ -103,6 +112,34 @@ object sfs_eval( object input ) {
 					input = input->cadddr;
 					goto eval;
 				}
+			}
+
+			if(!strcmp(input->this.pair.car->this.symbol,"define"))
+			{
+				object p=creer_env();
+				p=recherche_env(env_courant,input->cadr->this.symbol);
+				if(p==NULL)
+				{
+					ajout_queue_var(env_courant,input->cadr,input->caddr);
+					return env_courant;
+
+				}
+				else WARNING_MSG("Pour changer la valeur de la variable, utilisez set!");
+
+			}
+
+			if(!strcmp(input->this.pair.car->this.symbol,"set!"))
+			{
+				object p=creer_env();
+				p=recherche_env(env_courant,input->cadr->this.symbol);
+				if(p==NULL) WARNING_MSG("La variable n'est pas définie");
+				else 
+				{
+					p->this.pair.cdr=input->caddr;
+					return env_courant;
+				}
+				return env_courant;
+
 			}
 		}
 		return input;

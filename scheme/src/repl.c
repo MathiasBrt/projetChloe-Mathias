@@ -38,7 +38,7 @@ void init_interpreter ( void ) {
 }
 
 extern int premiere_parenthese;
-object toplevel;
+extern object toplevel;
 
 int main ( int argc, char *argv[] ) {
 

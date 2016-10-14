@@ -11,7 +11,8 @@
 #include "print.h"
 int premiere_parenthese=0; /* Utilisation d'une variable globale pour la gestion de la première parenthese */
 #include <stdio.h>
-
+object toplevel;
+#include "environnement.h"
 
 /*
  * Cette fonction est appelée par sfs_print.
@@ -39,6 +40,9 @@ void sfs_print_atom( object o ) {
             printf("\"%s\"",o->this.string); break;
         case SFS_NIL:
         	printf(")"); break;
+
+        case SFS_ENVIRONNEMENT :
+            affiche_env(o);
             
     }
     return;
@@ -67,15 +71,20 @@ void sfs_print_pair( object o ) {
  */
 
 void sfs_print( object o ) {
+
 	if (!premiere_parenthese && SFS_NIL==o->type) printf("(");
+  
     if ( SFS_PAIR == o->type ) {
     	if (!premiere_parenthese){
     		premiere_parenthese++;
     		printf("(");
     	} 
-    	if (o->this.pair.car->type==SFS_PAIR) printf("(");
+        
+    	if (o->this.pair.car->type==SFS_PAIR || o->this.pair.car->type==SFS_NIL) printf("(");
         sfs_print_pair( o );
+
     }
+
     else {
         sfs_print_atom( o ); 
     }
