@@ -107,5 +107,13 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"set!"); valeur->this.number.this.integer=6;
 	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"+"); valeur->this.number.this.integer=7;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"-"); valeur->this.number.this.integer=8;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"*"); valeur->this.number.this.integer=9;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"/"); valeur->this.number.this.integer=10;
+	env=ajout_queue_var(env,forme,valeur);
 	return env;
 }

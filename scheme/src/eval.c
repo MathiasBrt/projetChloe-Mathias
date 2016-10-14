@@ -141,6 +141,90 @@ object sfs_eval( object input ) {
 				return env_courant;
 
 			}
+
+			if(!strcmp(input->this.pair.car->this.symbol,"+"))
+			{
+
+				object resultat=make_object(SFS_NUMBER);
+				resultat->this.number.this.integer=0;
+				while(input->this.pair.cdr->type!=SFS_NIL)
+				{
+					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_NUMBER)
+					{
+						resultat->this.number.this.integer+=input->this.pair.car->this.number.this.integer;
+
+					}
+
+				}return resultat;
+
+			}
+
+			if(!strcmp(input->this.pair.car->this.symbol,"-"))
+			{
+				object resultat=make_object(SFS_NUMBER);
+				resultat->this.number.this.integer=0;
+				if(input->this.pair.cdr->type!=SFS_NIL && input->cadr->type==SFS_NUMBER)
+				{
+					resultat->this.number.this.integer=input->cadr->this.number.this.integer;
+					input=input->this.pair.cdr;
+				}
+
+				while(input->this.pair.cdr->type!=SFS_NIL)
+				{
+					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_NUMBER)
+					{
+						resultat->this.number.this.integer-=input->this.pair.car->this.number.this.integer;
+
+					}
+
+				}return resultat;
+
+			}
+
+			if(!strcmp(input->this.pair.car->this.symbol,"*"))
+			{
+				
+				object resultat=make_object(SFS_NUMBER);
+				resultat->this.number.this.integer=1;
+				while(input->this.pair.cdr->type!=SFS_NIL)
+				{
+					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_NUMBER)
+					{
+						resultat->this.number.this.integer*=input->this.pair.car->this.number.this.integer;
+
+					}
+
+				}return resultat;
+
+			}
+
+			if(!strcmp(input->this.pair.car->this.symbol,"/"))
+			{
+				
+				object resultat=make_object(SFS_NUMBER);
+				resultat->this.number.this.integer=1;
+				
+				if(input->this.pair.cdr->type!=SFS_NIL && input->cadr->type==SFS_NUMBER)
+				{
+					resultat->this.number.this.integer=input->cadr->this.number.this.integer;
+					input=input->this.pair.cdr;
+				}
+
+				while(input->this.pair.cdr->type!=SFS_NIL)
+				{
+					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_NUMBER)
+					{
+						resultat->this.number.this.integer/=input->this.pair.car->this.number.this.integer;
+
+					}
+
+				}return resultat;
+
+			}
 		}
 		return input;
 	}

@@ -242,7 +242,7 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
                             if(typeOfExpressionFound == BASIC_ATOME) {
                                 typeOfExpressionFound = FINISHED;
                             }
-                        } else if(typeOfExpressionFound != S_EXPR_PARENTHESIS) {
+                        } else if(typeOfExpressionFound != S_EXPR_PARENTHESIS && (int)chunk[i]!=39) {
                             typeOfExpressionFound = BASIC_ATOME;
                         }
                     }
@@ -415,8 +415,9 @@ object sfs_read_atom( char *input, uint *here ) {
     }
 
     /* lecture d'un +, d'un - ou d'un chiffre */
-    if (ascii==43 || ascii==45 || (ascii>= 48 && ascii<=57))
+    if (((ascii==43 || ascii==45) && (input[*here+1]!=' ' && (int)input[(*here+1)]!=9 && (int)input[(*here+1)]!=41) ) || (ascii>= 48 && ascii<=57))
     {
+
     	buffer[buffer_counter]=input[*here];
     	buffer_counter++;
         (*here)++;
