@@ -142,7 +142,7 @@ object sfs_eval( object input ) {
 				else 
 				{
 					p->this.pair.cdr=sfs_eval(input->caddr);
-					return p;
+					return env_courant;
 				}
 				return env_courant;
 
