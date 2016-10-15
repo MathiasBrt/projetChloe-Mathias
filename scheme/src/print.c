@@ -12,7 +12,7 @@
 int premiere_parenthese=0; /* Utilisation d'une variable globale pour la gestion de la première parenthese */
 #include <stdio.h>
 object toplevel;
-#include "environnement.h "
+#include "environnement.h"
 
 /*
  * Cette fonction est appelée par sfs_print.

@@ -16,6 +16,7 @@ object toplevel;
 
 object sfs_eval( object input ) {
 	
+	object p=creer_env();
 	object env_courant=creer_env();
 	env_courant=toplevel;
 
@@ -29,7 +30,7 @@ object sfs_eval( object input ) {
 				return input;
 
 			}
-
+			/* forme quote */
 			if (strncmp(input->this.pair.car->this.symbol,"quote",5)==0){
 				while (input->this.pair.cdr->type != SFS_NIL)
 				{
@@ -39,6 +40,7 @@ object sfs_eval( object input ) {
 					return input;
 				}
 			}
+			/* forme and */
 			if(strncmp(input->this.pair.car->this.symbol,"and",3)==0)
 			{
 				
@@ -63,7 +65,8 @@ object sfs_eval( object input ) {
 					return et_logique;
 				}	
 			}
-
+			
+			/* forme or */
 			if(strncmp(input->this.pair.car->this.symbol,"or",2)==0)
 			{
 				
@@ -91,6 +94,7 @@ object sfs_eval( object input ) {
 
 			}	
 
+			/* forme if */
 			if(!strcmp(input->this.pair.car->this.symbol,"if")){ /* lecture d'un if */
 				if (input->this.pair.cdr->type==SFS_NIL){
 					WARNING_MSG("Pas de prédicat");
@@ -114,13 +118,14 @@ object sfs_eval( object input ) {
 				}
 			}
 
+			/* forme define */
 			if(!strcmp(input->this.pair.car->this.symbol,"define"))
 			{
 				object p=creer_env();
 				p=recherche_env(env_courant,input->cadr->this.symbol);
 				if(p==NULL)
 				{
-					ajout_queue_var(env_courant,input->cadr,input->caddr);
+					ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr));
 					return env_courant;
 
 				}
@@ -128,6 +133,7 @@ object sfs_eval( object input ) {
 
 			}
 
+			/* forme set! */
 			if(!strcmp(input->this.pair.car->this.symbol,"set!"))
 			{
 				object p=creer_env();
@@ -135,95 +141,144 @@ object sfs_eval( object input ) {
 				if(p==NULL) WARNING_MSG("La variable n'est pas définie");
 				else 
 				{
-					p->this.pair.cdr=input->caddr;
-					return env_courant;
+					p->this.pair.cdr=sfs_eval(input->caddr);
+					return p;
 				}
 				return env_courant;
 
 			}
-
+			
+			/* formes opérations */
 			if(!strcmp(input->this.pair.car->this.symbol,"+"))
 			{
-
 				object resultat=make_object(SFS_NUMBER);
 				resultat->this.number.this.integer=0;
 				while(input->this.pair.cdr->type!=SFS_NIL)
 				{
 					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_PAIR){
+						input->this.pair.car=sfs_eval(input->this.pair.car);
+					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer+=input->this.pair.car->this.number.this.integer;
-
 					}
-
+					else if(input->this.pair.car->type==SFS_SYMBOL){
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
+						if(p->this.pair.cdr->type==SFS_NUMBER){
+							resultat->this.number.this.integer+=p->this.pair.cdr->this.number.this.integer;
+						}
+						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+					}
 				}return resultat;
-
 			}
 
 			if(!strcmp(input->this.pair.car->this.symbol,"-"))
 			{
 				object resultat=make_object(SFS_NUMBER);
 				resultat->this.number.this.integer=0;
-				if(input->this.pair.cdr->type!=SFS_NIL && input->cadr->type==SFS_NUMBER)
+				if(input->this.pair.cdr->type!=SFS_NIL)
 				{
-					resultat->this.number.this.integer=input->cadr->this.number.this.integer;
-					input=input->this.pair.cdr;
+					if(input->cadr->type==SFS_PAIR){
+						input->cadr=sfs_eval(input->cadr);
+					}
+					if(input->cadr->type==SFS_NUMBER){
+						resultat->this.number.this.integer=input->cadr->this.number.this.integer;
+						input=input->this.pair.cdr;
+					}
+					if(input->cadr->type==SFS_SYMBOL){
+						p=recherche(env_courant,input->cadr->this.symbol);
+						if(p->this.pair.cdr->type==SFS_NUMBER){
+							resultat->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
+						}
+						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						input=input->this.pair.cdr;
+					}
 				}
-
 				while(input->this.pair.cdr->type!=SFS_NIL)
 				{
 					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_PAIR){
+						input->this.pair.car=sfs_eval(input->this.pair.car);
+					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer-=input->this.pair.car->this.number.this.integer;
-
 					}
-
+					if(input->this.pair.car->type==SFS_SYMBOL){
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
+						if(p->this.pair.cdr->type==SFS_NUMBER){
+							resultat->this.number.this.integer-=p->this.pair.cdr->this.number.this.integer;
+						}
+						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+					}
 				}return resultat;
-
 			}
 
 			if(!strcmp(input->this.pair.car->this.symbol,"*"))
 			{
-				
 				object resultat=make_object(SFS_NUMBER);
 				resultat->this.number.this.integer=1;
 				while(input->this.pair.cdr->type!=SFS_NIL)
 				{
 					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_PAIR){
+						input->this.pair.car=sfs_eval(input->this.pair.car);
+					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer*=input->this.pair.car->this.number.this.integer;
-
 					}
-
+					if(input->this.pair.car->type==SFS_SYMBOL){
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
+						if(p->this.pair.cdr->type==SFS_NUMBER){
+							resultat->this.number.this.integer*=p->this.pair.cdr->this.number.this.integer;
+						}
+						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+					}
 				}return resultat;
-
 			}
 
 			if(!strcmp(input->this.pair.car->this.symbol,"/"))
 			{
-				
 				object resultat=make_object(SFS_NUMBER);
-				resultat->this.number.this.integer=1;
-				
-				if(input->this.pair.cdr->type!=SFS_NIL && input->cadr->type==SFS_NUMBER)
+				resultat->this.number.this.integer=1;	
+				if(input->this.pair.cdr->type!=SFS_NIL)
 				{
-					resultat->this.number.this.integer=input->cadr->this.number.this.integer;
-					input=input->this.pair.cdr;
+					if(input->cadr->type==SFS_PAIR){
+						input->cadr=sfs_eval(input->cadr);
+					}
+					if(input->cadr->type==SFS_NUMBER){
+						resultat->this.number.this.integer=input->cadr->this.number.this.integer;
+						input=input->this.pair.cdr;
+					}
+					if(input->cadr->type==SFS_SYMBOL){
+						p=recherche(env_courant,input->cadr->this.symbol);
+						if(p->this.pair.cdr->type==SFS_NUMBER){
+							resultat->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
+						}
+						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						input=input->this.pair.cdr;
+					}
 				}
-
 				while(input->this.pair.cdr->type!=SFS_NIL)
 				{
 					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_PAIR){
+						input->this.pair.car=sfs_eval(input->this.pair.car);
+					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer/=input->this.pair.car->this.number.this.integer;
-
 					}
-
+					if(input->this.pair.car->type==SFS_SYMBOL){
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
+						if(p->this.pair.cdr->type==SFS_NUMBER){
+							resultat->this.number.this.integer/=p->this.pair.cdr->this.number.this.integer;
+						}
+						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+					}
 				}return resultat;
-
 			}
 		}
 		return input;
