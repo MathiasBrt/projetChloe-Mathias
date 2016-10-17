@@ -5,5 +5,5 @@
 ==> #f
 ==> #t
 ==> ()
-==> #\space 
+==> #\space
 ==> #\newline

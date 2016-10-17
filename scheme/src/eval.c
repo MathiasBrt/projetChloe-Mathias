@@ -96,6 +96,26 @@ object sfs_eval( object input ) {
 
 			/* forme if */
 			if(!strcmp(input->this.pair.car->this.symbol,"if")){ /* lecture d'un if */
+				
+				if(input->cadr->type==SFS_PAIR)
+
+				{
+					if(sfs_eval(input->cadr->this.pair.car)->this.boolean==1)
+					{
+						
+						input = input->caddr;
+						goto eval;
+					}
+					if(!predicat(sfs_eval(input->cadr->this.pair.car)))
+					{
+						
+						input = input->cadddr;
+						goto eval;
+
+					}
+
+				}
+
 				if (input->this.pair.cdr->type==SFS_NIL){
 					WARNING_MSG("Pas de prédicat");
 					return input;
@@ -108,6 +128,7 @@ object sfs_eval( object input ) {
 					input = input->caddr;
 					goto eval;
 				}
+
 				else if (!predicat(input->cadr)){
 					if(input->cdddr->type==SFS_NIL){
 						WARNING_MSG("Pas d'alternative");
@@ -123,11 +144,33 @@ object sfs_eval( object input ) {
 			{
 				object p=creer_env();
 				p=recherche_env(env_courant,input->cadr->this.symbol);
+
 				if(p==NULL)
 				{
+					if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.cdr->type==SFS_NIL)
+					{
+					ajout_queue_var(env_courant,input->cadr->this.pair.car,sfs_eval(input->caddr));
+					return env_courant;
+					}
+
+					if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.cdr->type!=SFS_NIL)
+					{
+						WARNING_MSG("Trop d'arguments, indéfinissable");
+						return input;
+
+					}
+
+					if(input->caddr->type==SFS_NIL)
+					{
+						WARNING_MSG("La variable ne peut pas prendre la valeur ()");
+						return input;
+
+					}
+					else
+					{
 					ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr));
 					return env_courant;
-
+					}
 				}
 				else WARNING_MSG("Pour changer la valeur de la variable, utilisez set!");
 
@@ -239,6 +282,7 @@ object sfs_eval( object input ) {
 				}return resultat;
 			}
 
+			/* Opérateur division "/" */
 			if(!strcmp(input->this.pair.car->this.symbol,"/"))
 			{
 				object resultat=make_object(SFS_NUMBER);
@@ -248,9 +292,14 @@ object sfs_eval( object input ) {
 					if(input->cadr->type==SFS_PAIR){
 						input->cadr=sfs_eval(input->cadr);
 					}
-					if(input->cadr->type==SFS_NUMBER){
+					if(input->cadr->type==SFS_NUMBER && input->cadr->this.number.this.integer !=0){
 						resultat->this.number.this.integer=input->cadr->this.number.this.integer;
 						input=input->this.pair.cdr;
+					}
+					if(input->cadr->type==SFS_NUMBER && input->cadr->this.number.this.integer ==0)
+					{
+					ERROR_MSG("Division par 0 impossible");
+
 					}
 					if(input->cadr->type==SFS_SYMBOL){
 						p=recherche(env_courant,input->cadr->this.symbol);
@@ -280,6 +329,7 @@ object sfs_eval( object input ) {
 					}
 				}return resultat;
 			}
+			
 		}
 		return input;
 	}
