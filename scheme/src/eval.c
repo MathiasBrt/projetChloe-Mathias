@@ -32,14 +32,16 @@ object sfs_eval( object input ) {
 			}
 			/* forme quote */
 			if (strcmp(input->this.pair.car->this.symbol,"quote")==0){
-				while (input->this.pair.cdr->type != SFS_NIL)
+				if (input->this.pair.cdr->type != SFS_NIL)
 				{
 					
 					input = input->cadr;
-					
 					return input;
-				}
-			}
+
+				} 			
+
+				else WARNING_MSG (" Rien à recopier");
+			}	
 			/* forme and */
 			if(strcmp(input->this.pair.car->this.symbol,"and")==0)
 			{
@@ -48,7 +50,7 @@ object sfs_eval( object input ) {
 				
 				if(predicat(input->cadr)  == 0) 
 				{
-					
+			
 					et_logique->this.boolean= 0;
 					return et_logique;
 				}

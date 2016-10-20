@@ -1,4 +1,4 @@
-==> "Bonjour"
+==> "Bonjour					"
 ==> ()
 ==> (123)
 ==> (quote (quote (quote quote)))
