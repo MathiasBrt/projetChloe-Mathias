@@ -127,6 +127,7 @@ int main ( int argc, char *argv[] ) {
 
         here  = 0;
         sexpr = sfs_read( input, &here );
+        if (here != strlen(input)) WARNING_MSG("Fin de l'expression non atteinte");
         if ( NULL == sexpr ) {
             /* si fichier alors on sort*/
             if (mode == SCRIPT) {

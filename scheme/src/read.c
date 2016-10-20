@@ -425,7 +425,6 @@ object sfs_read_atom( char *input, uint *here ) {
         {
             if((int)input[(*here)]< 48 || (int)input[(*here)]>57)
             {
-             printf("\n>>>>>%d\n",input[(*here)]);
                 WARNING_MSG( "Ce n'est pas un nombre" ); 
                 return NULL;
             } 

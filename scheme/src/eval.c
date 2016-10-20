@@ -31,7 +31,7 @@ object sfs_eval( object input ) {
 
 			}
 			/* forme quote */
-			if (strncmp(input->this.pair.car->this.symbol,"quote",5)==0){
+			if (strcmp(input->this.pair.car->this.symbol,"quote")==0){
 				while (input->this.pair.cdr->type != SFS_NIL)
 				{
 					
@@ -41,7 +41,7 @@ object sfs_eval( object input ) {
 				}
 			}
 			/* forme and */
-			if(strncmp(input->this.pair.car->this.symbol,"and",3)==0)
+			if(strcmp(input->this.pair.car->this.symbol,"and")==0)
 			{
 				
 				object et_logique=make_object(SFS_BOOLEAN);
@@ -67,7 +67,7 @@ object sfs_eval( object input ) {
 			}
 			
 			/* forme or */
-			if(strncmp(input->this.pair.car->this.symbol,"or",2)==0)
+			if(strcmp(input->this.pair.car->this.symbol,"or")==0)
 			{
 				
 				object et_logique=make_object(SFS_BOOLEAN);
