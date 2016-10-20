@@ -1,5 +1,6 @@
 #include "environnement.h"
 #include "print.h"
+#include "primitive.h"
 
 object creer_env(void){
 	object env=make_object(SFS_ENVIRONNEMENT);
@@ -75,6 +76,7 @@ object ajout_queue_var(object env, object variable, object valeur){
 		case 0x02: strcpy(nv_var->this.pair.cdr->this.string,valeur->this.string); break;
 		case 0x05: nv_var->this.pair.cdr->this.boolean=valeur->this.boolean; break;
 		case 0x06: strcpy(nv_var->this.pair.cdr->this.symbol,valeur->this.symbol); break;
+		case 0x08: nv_var->this.pair.cdr->this.primitive=valeur->this.primitive; break;
 	}
 	object p=creer_env();
 	p=env;
@@ -93,8 +95,8 @@ void affiche_var(object variable){
 object init_top_level(void){
 	object env=creer_env();
 	object forme=make_object(SFS_SYMBOL);
-	object valeur=make_object(SFS_NUMBER);
-	valeur->this.number.this.integer=1;
+	object valeur=make_object(SFS_PRIMITIVE);
+	/*valeur->this.number.this.integer=1;
 	strcpy(forme->this.symbol,"if");
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"and"); valeur->this.number.this.integer=2;
@@ -106,14 +108,14 @@ object init_top_level(void){
 	strcpy(forme->this.symbol,"define"); valeur->this.number.this.integer=5;
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"set!"); valeur->this.number.this.integer=6;
+	env=ajout_queue_var(env,forme,valeur);*/
+	strcpy(forme->this.symbol,"+"); valeur->this.primitive=add;
 	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"+"); valeur->this.number.this.integer=7;
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"-"); valeur->this.number.this.integer=8;
+	/*strcpy(forme->this.symbol,"-"); valeur->this.number.this.integer=8;
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"*"); valeur->this.number.this.integer=9;
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"/"); valeur->this.number.this.integer=10;
-	env=ajout_queue_var(env,forme,valeur);
+	env=ajout_queue_var(env,forme,valeur);*/
 	return env;
 }

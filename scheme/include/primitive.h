@@ -8,6 +8,8 @@ extern "C" {
 #include "number.h"
 #include "object.h"
 
+object add(object input);
+
 #ifdef __cplusplus
 }
 #endif

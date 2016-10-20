@@ -1,0 +1,4 @@
+
+(gedit:3389): Gtk-CRITICAL **: gtk_widget_get_preferred_width_for_height: assertion 'height >= 0' failed
+
+(gedit:3389): Gtk-WARNING **: gtk_widget_size_allocate(): attempt to allocate widget with width 10 and height -27

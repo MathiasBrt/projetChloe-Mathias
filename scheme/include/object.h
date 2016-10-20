@@ -22,6 +22,7 @@ typedef enum bool{ /* une définition pour la gestion des booléens */
     f=0
 } BOOL;
 
+
 typedef struct object_t {
 
     uint type;
@@ -33,7 +34,7 @@ typedef struct object_t {
         string           string;
         string           symbol;
         BOOL             boolean;
-
+		struct object_t* (*primitive)(struct object_t*);
         struct pair_t {
             struct object_t *car;
             struct object_t *cdr;
@@ -57,6 +58,7 @@ object make_nil( void );
 #define SFS_BOOLEAN      0x05
 #define SFS_SYMBOL       0x06
 #define SFS_ENVIRONNEMENT 0x07
+#define SFS_PRIMITIVE 0x08
 
 #define cadr this.pair.cdr->this.pair.car
 #define caar this.pair.car->this.pair.car

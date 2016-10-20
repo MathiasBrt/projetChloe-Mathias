@@ -30,6 +30,15 @@ object sfs_eval( object input ) {
 				return input;
 
 			}
+			
+			if(!strcmp(input->this.pair.car->this.symbol,"+")){
+				p=recherche_env(env_courant,"+");
+				if (p==NULL) printf ("seg fault!!!\n");
+				object (*prim)(object);
+				prim = p->this.pair.cdr->this.primitive; printf("prim: %p\n",prim);
+				return prim(input);
+			}
+			
 			/* forme quote */
 			if (strcmp(input->this.pair.car->this.symbol,"quote")==0){
 				if (input->this.pair.cdr->type != SFS_NIL)
@@ -194,7 +203,7 @@ object sfs_eval( object input ) {
 			}
 			
 			/* formes opérations */
-			if(!strcmp(input->this.pair.car->this.symbol,"+"))
+			/*if(!strcmp(input->this.pair.car->this.symbol,"+"))
 			{
 				object resultat=make_object(SFS_NUMBER);
 				resultat->this.number.this.integer=0;
@@ -216,7 +225,7 @@ object sfs_eval( object input ) {
 						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
 					}
 				}return resultat;
-			}
+			}*/
 
 			if(!strcmp(input->this.pair.car->this.symbol,"-"))
 			{
