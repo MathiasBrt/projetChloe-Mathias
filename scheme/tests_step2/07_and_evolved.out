@@ -1,4 +1,4 @@
 ==> #f
-==> #f
+==> (and( and (and #f #t) #t)
 ==> (and #t #f)
 ==> (and #t #f)

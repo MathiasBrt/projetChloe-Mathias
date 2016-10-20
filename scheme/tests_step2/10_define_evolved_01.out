@@ -1,3 +1,5 @@
-==> (define quote 3)
+==> + a la valeur 
+quote a la valeur 3
+
 ==> (define r ())
 ==> (define (Bonjour Au revoir) 4)

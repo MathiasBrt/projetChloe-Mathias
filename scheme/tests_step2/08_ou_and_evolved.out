@@ -1,8 +1,8 @@
 ==> #f
-==> #f
+==> (and( and (and #f #t) #t)
 ==> (and #t #f)
 ==> (and #t #f)
 ==> #f
-==> #t
+==> (or( or (or #f #t) #t)
 ==> (or #t #f)
 ==> (or #t #f)

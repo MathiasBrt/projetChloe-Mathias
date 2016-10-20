@@ -94,7 +94,7 @@ void affiche_var(object variable){
 
 object init_top_level(void){
 	object env=creer_env();
-	object forme=make_object(SFS_SYMBOL);
+	object forme=make_object(SFS_PRIMITIVE);
 	object valeur=make_object(SFS_PRIMITIVE);
 	/*valeur->this.number.this.integer=1;
 	strcpy(forme->this.symbol,"if");
@@ -110,6 +110,12 @@ object init_top_level(void){
 	strcpy(forme->this.symbol,"set!"); valeur->this.number.this.integer=6;
 	env=ajout_queue_var(env,forme,valeur);*/
 	strcpy(forme->this.symbol,"+"); valeur->this.primitive=add;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"-"); valeur->this.primitive=sous;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"*"); valeur->this.primitive=mult;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"/"); valeur->this.primitive=divi;
 	env=ajout_queue_var(env,forme,valeur);
 	/*strcpy(forme->this.symbol,"-"); valeur->this.number.this.integer=8;
 	env=ajout_queue_var(env,forme,valeur);

@@ -9,6 +9,9 @@ extern "C" {
 #include "object.h"
 
 object add(object input);
+object mult(object input);
+object divi(object input);
+object sous(object input);
 
 #ifdef __cplusplus
 }
