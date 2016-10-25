@@ -15,6 +15,11 @@ object sous(object input);
 object egal(object input);
 object inf(object input);
 object sup(object input);
+object est_pair(object input);
+object est_string(object input);
+object est_character(object input);
+object est_integer(object input);
+object est_primitive(object input);
 
 #ifdef __cplusplus
 }

@@ -62,7 +62,9 @@ object recherche(object env, string variable){
 		if(result!=NULL) return result;
 		p=p->env_suiv;
 	}
-	ERROR_MSG("Unbound variable '%s'",variable);
+
+	WARNING_MSG("Unbound variable '%s'",variable);
+	
 }
 
 object ajout_queue_var(object env, object variable, object valeur){
@@ -126,6 +128,15 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,">"); valeur->this.primitive=sup;
 	env=ajout_queue_var(env,forme,valeur);
-
+	strcpy(forme->this.symbol,"pair?"); valeur->this.primitive=est_pair;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"string?"); valeur->this.primitive=est_string;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"character?"); valeur->this.primitive=est_character;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"integer?"); valeur->this.primitive=est_integer;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"primitive?"); valeur->this.primitive=est_primitive;
+	env=ajout_queue_var(env,forme,valeur);
 	return env;
 }
