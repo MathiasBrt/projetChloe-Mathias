@@ -151,9 +151,92 @@ object sous(object input)
 object egal(object input)
 
 {
-				object p=creer_env();
-				object resultat=make_object(SFS_NUMBER);
-				resultat->this.number.this.integer=0;
+	object p=creer_env();
+	object resultat=make_object(SFS_BOOLEAN);
+
+	if(input->cadr->type==SFS_PAIR)
+	{
+		input->cadr=sfs_eval(input->cadr);
+	}
+				
+	if(input->cadr->type==SFS_SYMBOL)
+	{
+		p=recherche(toplevel,input->cadr->this.symbol);
+		if(p->this.pair.cdr->type==SFS_NUMBER)
+		{
+			if(p->this.pair.cdr->this.number.this.integer==input->caddr->this.number.this.integer)
+			{
+				resultat->this.boolean=1;	
+			}
+			else 
+			{
+				resultat->this.boolean=0;
+				return resultat;
+			}
+		}
+		else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						
+	}
+
+		if(input->cadr->type==SFS_NUMBER)
+		{
+			if(input->cadr->this.number.this.integer==input->caddr->this.number.this.integer)
+			{
+				resultat->this.boolean=1;
+				
+			}
+			else 
+			{
+				resultat->this.boolean=0;
+				return resultat;
+			}
+
+		}
+
+	while(input->cddr->type!=SFS_NIL)
+	{
+		input=input->this.pair.cdr;
+
+		if(input->this.pair.car->type==SFS_PAIR)
+		{
+			input->this.pair.car=sfs_eval(input->this.pair.car);
+		}
+				
+		if(input->this.pair.car->type==SFS_SYMBOL)
+		{
+			p=recherche(toplevel,input->this.pair.car->this.symbol);
+			if(p->this.pair.cdr->type==SFS_NUMBER)
+			{
+				if(p->this.pair.cdr->this.number.this.integer==input->cadr->this.number.this.integer)
+				{
+					resultat->this.boolean=1;	
+				}
+				else 
+				{
+					resultat->this.boolean=0;
+					return resultat;
+				}
+			}
+			else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						
+		}
+
+		if(input->this.pair.car->type==SFS_NUMBER)
+		{
+			if(input->this.pair.car->this.number.this.integer==input->cadr->this.number.this.integer)
+			{
+				resultat->this.boolean=1;
+				
+			}
+			else 
+			{
+				resultat->this.boolean=0;
+				return resultat;
+			}
+
+		}
+	}return resultat;
+			
 }
 
 object inf(object input)
