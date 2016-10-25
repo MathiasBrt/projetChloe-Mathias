@@ -126,6 +126,11 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,">"); valeur->this.primitive=sup;
 	env=ajout_queue_var(env,forme,valeur);
-
+	strcpy(forme->this.symbol,"null?"); valeur->this.primitive=est_null;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"boolean?"); valeur->this.primitive=est_boolean;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"symbol?"); valeur->this.primitive=est_symbol;
+	env=ajout_queue_var(env,forme,valeur);
 	return env;
 }

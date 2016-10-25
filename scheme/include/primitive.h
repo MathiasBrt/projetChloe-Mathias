@@ -15,6 +15,9 @@ object sous(object input);
 object egal(object input);
 object inf(object input);
 object sup(object input);
+object est_null(object input);
+object est_boolean(object input);
+object est_symbol(object input);
 
 #ifdef __cplusplus
 }
