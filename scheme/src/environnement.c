@@ -99,6 +99,7 @@ object init_top_level(void){
 	object variable=make_object(SFS_SYMBOL);
 	object donnee=make_object(SFS_NUMBER);
 	donnee->this.number.this.integer=1;
+
 	strcpy(variable->this.symbol,"if");
 	env=ajout_queue_var(env,variable,donnee);
 	strcpy(variable->this.symbol,"and"); donnee->this.number.this.integer=2;
@@ -125,10 +126,6 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,">"); valeur->this.primitive=sup;
 	env=ajout_queue_var(env,forme,valeur);
-	
 
-
-
-	
 	return env;
 }
