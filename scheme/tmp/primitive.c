@@ -345,30 +345,7 @@ object sup(object input)
 				return resultat;
 }
 
-object est_null(object input){
-	object resultat=make_object(SFS_BOOLEAN);
-	if(input->this.pair.cdr->type!=SFS_NIL){
-		resultat->this.boolean= (input->cadr->type==SFS_NIL) ? TRUE:FALSE;
-	}
-	return resultat;
-}
-
-object est_boolean(object input){
-	object resultat=make_object(SFS_BOOLEAN);
-	if(input->this.pair.cdr->type!=SFS_NIL){
-		resultat->this.boolean= (input->cadr->type==SFS_BOOLEAN) ? TRUE:FALSE;
-	}
-	return resultat;
-}
-
-object est_symbol(object input){
-	object resultat=make_object(SFS_BOOLEAN);
-	if(input->this.pair.cdr->type!=SFS_NIL){
-		resultat->this.boolean= (input->cadr->type==SFS_SYMBOL) ? TRUE:FALSE;
-	}
-	return resultat;
-}
-
+<<<<<<< HEAD
 object est_pair(object input)
 {
 	object resultat=make_object(SFS_BOOLEAN);
@@ -465,4 +442,29 @@ object est_primitive(object input)
 			return resultat;
 		}
 	
+
+=======
+object est_null(object input){
+	object resultat=make_object(SFS_BOOLEAN);
+	if(input->this.pair.cdr->type!=SFS_NIL){
+		resultat->this.boolean= (input->cadr->type==SFS_NIL) ? TRUE:FALSE;
+	}
+	return resultat;
+}
+
+object est_boolean(object input){
+	object resultat=make_object(SFS_BOOLEAN);
+	if(input->this.pair.cdr->type!=SFS_NIL){
+		resultat->this.boolean= (input->cadr->type==SFS_BOOLEAN) ? TRUE:FALSE;
+	}
+	return resultat;
+}
+
+object est_symbol(object input){
+	object resultat=make_object(SFS_BOOLEAN);
+	if(input->this.pair.cdr->type!=SFS_NIL){
+		resultat->this.boolean= (input->cadr->type==SFS_SYMBOL) ? TRUE:FALSE;
+	}
+	return resultat;
+>>>>>>> 32e1d30bcdbcef315310de9da15b8182a1df2d16
 }

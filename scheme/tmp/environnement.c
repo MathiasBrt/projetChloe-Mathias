@@ -62,7 +62,9 @@ object recherche(object env, string variable){
 		if(result!=NULL) return result;
 		p=p->env_suiv;
 	}
-	ERREUR_MSG("Unbound variable '%s'",variable);
+
+	WARNING_MSG("Unbound variable '%s'",variable);
+	
 }
 
 object ajout_queue_var(object env, object variable, object valeur){
@@ -126,11 +128,7 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,">"); valeur->this.primitive=sup;
 	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"null?"); valeur->this.primitive=est_null;
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"boolean?"); valeur->this.primitive=est_boolean;
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"symbol?"); valeur->this.primitive=est_symbol;
+<<<<<<< HEAD
 	strcpy(forme->this.symbol,"pair?"); valeur->this.primitive=est_pair;
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"string?"); valeur->this.primitive=est_string;
@@ -140,6 +138,13 @@ object init_top_level(void){
 	strcpy(forme->this.symbol,"integer?"); valeur->this.primitive=est_integer;
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"primitive?"); valeur->this.primitive=est_primitive;
+=======
+	strcpy(forme->this.symbol,"null?"); valeur->this.primitive=est_null;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"boolean?"); valeur->this.primitive=est_boolean;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"symbol?"); valeur->this.primitive=est_symbol;
+>>>>>>> 32e1d30bcdbcef315310de9da15b8182a1df2d16
 	env=ajout_queue_var(env,forme,valeur);
 	return env;
 }
