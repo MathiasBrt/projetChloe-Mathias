@@ -96,19 +96,21 @@ object init_top_level(void){
 	object env=creer_env();
 	object forme=make_object(SFS_PRIMITIVE);
 	object valeur=make_object(SFS_PRIMITIVE);
-	/*valeur->this.number.this.integer=1;
-	strcpy(forme->this.symbol,"if");
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"and"); valeur->this.number.this.integer=2;
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"or"); valeur->this.number.this.integer=3;
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"quote"); valeur->this.number.this.integer=4;
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"define"); valeur->this.number.this.integer=5;
-	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"set!"); valeur->this.number.this.integer=6;
-	env=ajout_queue_var(env,forme,valeur);*/
+	object variable=make_object(SFS_SYMBOL);
+	object donnee=make_object(SFS_NUMBER);
+	donnee->this.number.this.integer=1;
+	strcpy(variable->this.symbol,"if");
+	env=ajout_queue_var(env,variable,donnee);
+	strcpy(variable->this.symbol,"and"); donnee->this.number.this.integer=2;
+	env=ajout_queue_var(env,variable,donnee);
+	strcpy(variable->this.symbol,"or"); donnee->this.number.this.integer=3;
+	env=ajout_queue_var(env,variable,donnee);
+	strcpy(variable->this.symbol,"quote"); donnee->this.number.this.integer=4;
+	env=ajout_queue_var(env,variable,donnee);
+	strcpy(variable->this.symbol,"define"); donnee->this.number.this.integer=5;
+	env=ajout_queue_var(env,variable,donnee);
+	strcpy(variable->this.symbol,"set!"); donnee->this.number.this.integer=6;
+	env=ajout_queue_var(env,variable,donnee);
 	strcpy(forme->this.symbol,"+"); valeur->this.primitive=add;
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"-"); valeur->this.primitive=sous;
@@ -117,11 +119,16 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"/"); valeur->this.primitive=divi;
 	env=ajout_queue_var(env,forme,valeur);
-	/*strcpy(forme->this.symbol,"-"); valeur->this.number.this.integer=8;
+	strcpy(forme->this.symbol,"="); valeur->this.primitive=egal;
 	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"*"); valeur->this.number.this.integer=9;
+	strcpy(forme->this.symbol,"<"); valeur->this.primitive=inf;
 	env=ajout_queue_var(env,forme,valeur);
-	strcpy(forme->this.symbol,"/"); valeur->this.number.this.integer=10;
-	env=ajout_queue_var(env,forme,valeur);*/
+	strcpy(forme->this.symbol,">"); valeur->this.primitive=sup;
+	env=ajout_queue_var(env,forme,valeur);
+	
+
+
+
+	
 	return env;
 }

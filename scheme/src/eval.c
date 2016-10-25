@@ -31,28 +31,27 @@ object sfs_eval( object input ) {
 				if(p->this.pair.cdr->type==SFS_PRIMITIVE)
 				{
 
-			if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
-			{
-				WARNING_MSG("La forme est certainement en majuscule !");
-				return input;
+					object (*prim)(object);
+					prim = p->this.pair.cdr->this.primitive;
+					return prim(input);
+				}
 
-			}
-
-			object (*prim)(object);
-			prim = p->this.pair.cdr->this.primitive;
-			return prim(input);
-			
-			
-			
-			/* forme quote */
-			if (strcmp(input->this.pair.car->this.symbol,"quote")==0){
-				if (input->this.pair.cdr->type != SFS_NIL)
+				if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
 				{
-					
-					input = input->cadr;
+					WARNING_MSG("La forme est certainement en majuscule !");
 					return input;
 
-				} 			
+				}
+
+				/* forme quote */
+				if (strcmp(input->this.pair.car->this.symbol,"quote")==0){
+					if (input->this.pair.cdr->type != SFS_NIL)
+					{
+					
+						input = input->cadr;
+						return input;
+
+					} 			
 
 				else WARNING_MSG (" Rien à recopier");
 			}	
@@ -160,6 +159,7 @@ object sfs_eval( object input ) {
 			{
 				object p=creer_env();
 				p=recherche_env(env_courant,input->cadr->this.symbol);
+				
 
 				if(p==NULL)
 				{
@@ -208,11 +208,6 @@ object sfs_eval( object input ) {
 			}
 			
 		
-			
-			
-
-			
-		}
 		return input;
 		}
 	}

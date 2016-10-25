@@ -148,3 +148,27 @@ object sous(object input)
 					}
 				}return resultat;
 			}
+object egal(object input)
+
+{
+				object p=creer_env();
+				object resultat=make_object(SFS_NUMBER);
+				resultat->this.number.this.integer=0;
+}
+
+object inf(object input)
+
+{
+				object p=creer_env();
+				object resultat=make_object(SFS_NUMBER);
+				resultat->this.number.this.integer=0;
+}
+
+object sup(object input)
+
+{
+				object p=creer_env();
+				object resultat=make_object(SFS_NUMBER);
+				resultat->this.number.this.integer=0;
+
+}

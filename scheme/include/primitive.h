@@ -12,6 +12,9 @@ object add(object input);
 object mult(object input);
 object divi(object input);
 object sous(object input);
+object egal(object input);
+object inf(object input);
+object sup(object input);
 
 #ifdef __cplusplus
 }
