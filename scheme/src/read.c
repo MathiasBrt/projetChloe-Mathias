@@ -429,7 +429,7 @@ object sfs_read_atom( char *input, uint *here ) {
     	buffer[buffer_counter]=input[*here];
     	buffer_counter++;
         (*here)++;
-        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41 &&(int)input[(*here)]!=40)
+        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41 &&(int)input[(*here)]!=40 && (int)input[(*here)]!=34)
         {
         	
             if((int)input[(*here)]< 48 || (int)input[(*here)]>57)
@@ -441,6 +441,16 @@ object sfs_read_atom( char *input, uint *here ) {
         buffer_counter++;
         (*here)++;    
         }
+			if((int)input[(*here)-1]==43){
+        		atom = make_object(SFS_SYMBOL);
+        		strcpy(atom->this.symbol,"+");
+        		return atom;
+        	}
+        	if((int)input[(*here)-1]==45){
+        		atom = make_object(SFS_SYMBOL);
+        		strcpy(atom->this.symbol,"-");
+        		return atom;
+        	}
             num nombre;
             nombre.this.integer=atoi(buffer);
             if((nombre.this.integer==-1 || nombre.this.integer==0) && buffer_counter>2){
