@@ -29,7 +29,7 @@ extern "C" {
 
 typedef unsigned int uint;
 
-typedef char string[STRLEN];
+typedef char string[BIGSTRING];
 
 #define init_string( s ) memset( s, '\0', STRLEN )
 

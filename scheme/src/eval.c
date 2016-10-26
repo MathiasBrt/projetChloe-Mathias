@@ -15,6 +15,8 @@
 object toplevel;
 
 object sfs_eval( object input ) {
+
+	if(input->type==SFS_SYMBOL) return input;
 	
 	object p=creer_env();
 	object env_courant=creer_env();
