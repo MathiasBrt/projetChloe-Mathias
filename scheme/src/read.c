@@ -362,7 +362,7 @@ object sfs_read_atom( char *input, uint *here ) {
             
             atom = make_object(SFS_CHARACTER);
             (*here)+=2;
-            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
+            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9){
                  
                  buffer[buffer_counter]=input[*here];
                  buffer_counter++;
