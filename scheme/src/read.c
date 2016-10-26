@@ -338,6 +338,13 @@ object sfs_read_atom( char *input, uint *here ) {
     string buffer;
     int buffer_counter=0;
     int echappement=0; /* concerne l'echappement de \ */
+    
+    /* lecture d'un ; (commentaire) */
+    if (ascii==59){
+    	while (input[(*here)!='\n']) (*here)++;
+    	
+    }
+    
 
     /* lecture d'un # */
     if (ascii==35){
@@ -421,8 +428,9 @@ object sfs_read_atom( char *input, uint *here ) {
     	buffer[buffer_counter]=input[*here];
     	buffer_counter++;
         (*here)++;
-        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41)
+        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41 &&(int)input[(*here)]!=40)
         {
+        	
             if((int)input[(*here)]< 48 || (int)input[(*here)]>57)
             {
                 WARNING_MSG( "Ce n'est pas un nombre" ); 

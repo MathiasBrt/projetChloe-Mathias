@@ -27,6 +27,7 @@ object sfs_eval( object input ) {
 			if(input->this.pair.car->type==SFS_SYMBOL)
 			{
 				p=recherche_env(env_courant,input->this.pair.car->this.symbol);
+				if(p==NULL) return input;
 
 				if(p->this.pair.cdr->type==SFS_PRIMITIVE)
 				{
