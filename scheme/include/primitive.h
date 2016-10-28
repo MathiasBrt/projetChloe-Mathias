@@ -26,6 +26,10 @@ object est_primitive(object input);
 object conv_string_to_symbol(object input);
 object conv_symbol_to_string(object input);
 object conv_string_to_number(object input);
+object set_car(object input);
+object set_cdr(object input);
+object new_list(object input);
+object eq_poly(object input);
 
 #ifdef __cplusplus
 }

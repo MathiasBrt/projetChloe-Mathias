@@ -77,6 +77,7 @@ object ajout_queue_var(object env, object variable, object valeur){
 		case 0x05: nv_var->this.pair.cdr->this.boolean=valeur->this.boolean; break;
 		case 0x06: strcpy(nv_var->this.pair.cdr->this.symbol,valeur->this.symbol); break;
 		case 0x08: nv_var->this.pair.cdr->this.primitive=valeur->this.primitive; break;
+		case 0x04: nv_var->this.pair.cdr=NULL;
 	}
 	object p=creer_env();
 	p=env;
@@ -147,6 +148,13 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"stringtonumber"); valeur->this.primitive=conv_string_to_number;
 	env=ajout_queue_var(env,forme,valeur);
-
+	strcpy(forme->this.symbol,"set-car!"); valeur->this.primitive=set_car;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"set-cdr!"); valeur->this.primitive=set_cdr;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"list!"); valeur->this.primitive=new_list;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"eq?"); valeur->this.primitive=eq_poly;
+	env=ajout_queue_var(env,forme,valeur);
 	return env;
 }

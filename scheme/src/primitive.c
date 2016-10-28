@@ -1,6 +1,7 @@
 #include "primitive.h"
 #include "eval.h"
 #include "environnement.h"
+#include "basic.h"
 
 extern object toplevel;
 
@@ -531,5 +532,147 @@ object conv_string_to_number(object input)
 return input;
 
 }
+
+object set_car(object input)
+{
+	object env_courant=creer_env();
+	env_courant=toplevel;
+
+if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.car->type==SFS_SYMBOL)
+	{
+		object p=creer_env();
+		p=recherche_env(env_courant,input->cadr->this.pair.car->this.symbol);
+		if(p!=NULL)
+		{
+			p->this.pair.cdr=sfs_eval(input->caddr);
+			return env_courant;
+
+		}
+
+		else WARNING_MSG("Erreur de syntaxe");
+	}
+
+	else WARNING_MSG("Erreur de syntaxe");
+	return input;
+}
+
+
+object set_cdr(object input)
+{
+	object env_courant=creer_env();
+	env_courant=toplevel;
+
+	if(input->cadr->type==SFS_PAIR && input->cadr->cadr->type==SFS_SYMBOL)
+	{
+		object p=creer_env();
+		p=recherche_env(env_courant,input->cadr->cadr->this.symbol);
+		if(p!=NULL)
+		{
+			p->this.pair.cdr=sfs_eval(input->caddr);
+			return env_courant;
+
+		}
+
+		else WARNING_MSG("La variable n'est pas définie");
+	}
+	else WARNING_MSG("Erreur de syntaxe");
+
+	return input;
+}
+
+object new_list(object input)
+{
+	object new_list=make_object(SFS_PAIR);
+	if(input->cadr->type==SFS_PAIR)
+	{
+		input->cadr=sfs_eval(input->cadr);
+	}
+	else
+	{
+		new_list=input->this.pair.cdr;
+		return new_list;
+	}return input;
+		
+}
+
+/* Test si deux object sont identiques*/
+object eq_poly(object input)
+{
+	object resultat=make_object(SFS_BOOLEAN);
+
+	if(input->cadr->type==SFS_PAIR)
+	{
+		input->cadr=sfs_eval(input->cadr);
+	}
+
+	while(input->cddr->type!=SFS_NIL)
+	{
+		if(input->cadr->type==input->caddr->type)
+		{	
+			switch(input->cadr->type)
+			{
+				
+				case 0x00 : 
+					if(input->cadr->this.number.this.integer==input->caddr->this.number.this.integer) 
+					resultat->this.boolean=1;
+						
+					else 
+					{
+						resultat->this.boolean=FALSE;
+						
+						return resultat;
+					}break;
+
+				case 0x01 :
+					if(input->cadr->this.character==input->caddr->this.character) 
+						resultat->this.boolean=TRUE;
+					else 
+					{
+						resultat->this.boolean=FALSE;
+						return resultat;
+					}break;
+
+				case 0x02 : 
+					if(strcpy(input->cadr->this.string,input->caddr->this.string)!=0) 
+						resultat->this.boolean=TRUE;
+					else 
+					{
+						resultat->this.boolean=FALSE;
+						return resultat;
+					}break;
+
+				case 0x03 :
+
+					input->cadr=sfs_eval(input->cadr);
+
+				case 0x05 : 
+					if(input->cadr->this.boolean==input->caddr->this.boolean) 
+						resultat->this.boolean=TRUE;
+					else 
+					{
+						resultat->this.boolean=FALSE;
+						return resultat;
+					}break;
+
+				case 0x06 :
+					if(strcpy(input->cadr->this.symbol,input->caddr->this.symbol)!=0) 
+						resultat->this.boolean=TRUE;
+					else 
+					{
+						resultat->this.boolean=FALSE;
+						return resultat;
+					}break;
+					
+			}
+			input=input->this.pair.cdr;
+			
+		}
+	
+	}return resultat;
+
+}
+
+
+
 
 
