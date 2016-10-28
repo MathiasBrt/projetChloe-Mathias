@@ -16,6 +16,7 @@
 
 #include "read.h"
 #include "print.h"
+#include "basic.h"
 
 
 
@@ -338,6 +339,13 @@ object sfs_read_atom( char *input, uint *here ) {
     string buffer;
     int buffer_counter=0;
     int echappement=0; /* concerne l'echappement de \ */
+    
+    /* lecture d'un ; (commentaire) */
+    if (ascii==59){
+    	while (input[(*here)!='\n']) (*here)++;
+    	
+    }
+    
 
     /* lecture d'un # */
     if (ascii==35){
@@ -354,7 +362,7 @@ object sfs_read_atom( char *input, uint *here ) {
             
             atom = make_object(SFS_CHARACTER);
             (*here)+=2;
-            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
+            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9){
                  
                  buffer[buffer_counter]=input[*here];
                  buffer_counter++;
@@ -421,8 +429,9 @@ object sfs_read_atom( char *input, uint *here ) {
     	buffer[buffer_counter]=input[*here];
     	buffer_counter++;
         (*here)++;
-        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41)
+        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41 &&(int)input[(*here)]!=40 && (int)input[(*here)]!=34)
         {
+        	
             if((int)input[(*here)]< 48 || (int)input[(*here)]>57)
             {
                 WARNING_MSG( "Ce n'est pas un nombre" ); 
@@ -432,8 +441,24 @@ object sfs_read_atom( char *input, uint *here ) {
         buffer_counter++;
         (*here)++;    
         }
+			if((int)input[(*here)-1]==43){
+        		atom = make_object(SFS_SYMBOL);
+        		strcpy(atom->this.symbol,"+");
+        		return atom;
+        	}
+        	if((int)input[(*here)-1]==45){
+        		atom = make_object(SFS_SYMBOL);
+        		strcpy(atom->this.symbol,"-");
+        		return atom;
+        	}
             num nombre;
             nombre.this.integer=atoi(buffer);
+            if((nombre.this.integer==-1 || nombre.this.integer==0) && buffer_counter>2){
+            	atom = make_object(SFS_NUMBER);
+            	atom->this.number=nombre;
+            	atom->this.number.numtype= (nombre.this.integer==0) ? NUM_MINFTY:NUM_PINFTY;
+            	return atom;
+            }
             atom = make_object( SFS_NUMBER ) ; 
             atom->this.number=nombre;
             return atom;
