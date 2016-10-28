@@ -62,7 +62,7 @@ object recherche(object env, string variable){
 		if(result!=NULL) return result;
 		p=p->env_suiv;
 	}
-	ERREUR_MSG("Unbound variable '%s'",variable);
+	ERROR_MSG("Unbound variable '%s'",variable);
 }
 
 object ajout_queue_var(object env, object variable, object valeur){

@@ -1,4 +1,4 @@
-simpleUnitTest.sh : script de test "unitaire" "boite noire" (ou "externe") minimal.
+tsimpleUnitTest.sh : script de test "unitaire" "boite noire" (ou "externe") minimal.
 
 ########################################
 # Update Sept 2012
