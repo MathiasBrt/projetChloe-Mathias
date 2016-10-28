@@ -466,3 +466,70 @@ object est_primitive(object input)
 		}
 	
 }
+
+object conv_string_to_symbol(object input)
+{	
+
+	object resultat=make_object(SFS_SYMBOL);
+	
+
+	if(input->cadr->type==SFS_PAIR)
+	{
+		input->cadr=sfs_eval(input->cadr);
+	}
+
+	if(input->cadr->type==SFS_STRING)
+	{
+		strcpy(resultat->this.symbol,input->cadr->this.string);
+		return resultat;
+	} 
+
+	else ERROR_MSG("Vous essayez de convertir type qui n'est pas une chaine de caractère");
+	
+}
+
+object conv_symbol_to_string(object input)
+{
+	object resultat=make_object(SFS_STRING);
+
+	if(input->cadr->type==SFS_PAIR)
+	{
+		input->cadr=sfs_eval(input->cadr);
+	}
+
+	if(input->cadr->type==SFS_SYMBOL)
+	{
+		strcpy(resultat->this.string,input->cadr->this.symbol);
+		return resultat;
+				
+	} 
+
+	else ERROR_MSG("Vous essayez de convertir type qui n'est pas un symbol");
+
+	
+}
+
+object conv_string_to_number(object input)
+{
+	object resultat=make_object(SFS_NUMBER);
+	int i=0;
+
+	if(input->cadr->type==SFS_PAIR)
+	{
+		input->cadr=sfs_eval(input->cadr);
+	}
+
+	if(input->cadr->type==SFS_STRING)
+	{
+		while(i<strlen(input->cadr->this.string))
+		{
+			resultat->this.number.this.integer+=((int)(input->cadr->this.string[i]));
+			i++;
+		}return resultat;
+
+	}
+return input;
+
+}
+
+

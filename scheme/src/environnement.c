@@ -141,5 +141,12 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"primitive?"); valeur->this.primitive=est_primitive;
 	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"stringtosymbol"); valeur->this.primitive=conv_string_to_symbol;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"symboltostring"); valeur->this.primitive=conv_symbol_to_string;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"stringtonumber"); valeur->this.primitive=conv_string_to_number;
+	env=ajout_queue_var(env,forme,valeur);
+
 	return env;
 }

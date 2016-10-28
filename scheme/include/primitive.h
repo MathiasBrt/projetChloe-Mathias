@@ -23,7 +23,9 @@ object est_string(object input);
 object est_character(object input);
 object est_integer(object input);
 object est_primitive(object input);
-
+object conv_string_to_symbol(object input);
+object conv_symbol_to_string(object input);
+object conv_string_to_number(object input);
 
 #ifdef __cplusplus
 }
