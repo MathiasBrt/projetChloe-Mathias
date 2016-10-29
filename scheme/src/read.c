@@ -362,15 +362,20 @@ object sfs_read_atom( char *input, uint *here ) {
             
             atom = make_object(SFS_CHARACTER);
             (*here)+=2;
-            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9){
+            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && (int)input[(*here)]!=41){
                  
                  buffer[buffer_counter]=input[*here];
                  buffer_counter++;
                  (*here)++;
             }
+            if(buffer_counter==0 && (int)input[(*here)]==41){
+                 buffer[buffer_counter]=input[*here];
+                 buffer_counter++;
+                 (*here)++;
+            } 
             if (buffer_counter==0){
                  WARNING_MSG( "Could not read valid atom expression" );
-                 return NULL;
+                 return nil;
             }
             if (buffer_counter==1){
                  atom->this.character=buffer[0]; /* un seul caractere lu */
@@ -381,13 +386,13 @@ object sfs_read_atom( char *input, uint *here ) {
                  else if (!strncmp(buffer,"newline",buffer_counter)) atom->this.character=10; /* ascii de newline */
                  else {
                      WARNING_MSG( "Could not read valid atom expression" );
-                     return NULL;
+                     return nil;
                  }
                  return atom;
             }
         }
         else WARNING_MSG( "Could not read valid atom expression" );
-        return NULL;
+        return nil;
     }
 
     /* lecture de " */
@@ -419,7 +424,7 @@ object sfs_read_atom( char *input, uint *here ) {
             buffer_counter++;
             (*here)++;
         }
-        return NULL;
+        return nil;
     }
 
     /* lecture d'un +, d'un - ou d'un chiffre */
@@ -435,7 +440,7 @@ object sfs_read_atom( char *input, uint *here ) {
             if((int)input[(*here)]< 48 || (int)input[(*here)]>57)
             {
                 WARNING_MSG( "Ce n'est pas un nombre" ); 
-                return NULL;
+                return nil;
             } 
         buffer[buffer_counter]=input[*here];
         buffer_counter++;
@@ -498,7 +503,7 @@ object sfs_read_atom( char *input, uint *here ) {
         return atom;
         }
     }
-    return NULL;
+    return nil;
 }
 
 

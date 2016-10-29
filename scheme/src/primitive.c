@@ -468,6 +468,39 @@ object est_primitive(object input)
 	
 }
 
+object conv_char_to_integer(object input){
+	object resultat=make_object(SFS_NUMBER);
+	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	if(input->cadr->type==SFS_CHARACTER){
+		resultat->this.number.this.integer=(int)input->cadr->this.character;
+		return resultat;
+	}
+	WARNING_MSG("Vous essayez de convertir un type qui n'est pas un caractère");
+	return input;
+}
+
+object conv_integer_to_char(object input){
+	object resultat=make_object(SFS_CHARACTER);
+	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	if(input->cadr->type==SFS_NUMBER){
+		resultat->this.character=input->cadr->this.number.this.integer;
+		return resultat;
+	}
+	WARNING_MSG("Vous essayez de convertir un type qui n'est pas un nombre");
+	return input;
+}
+
+object conv_number_to_string(object input){
+	object result=make_object(SFS_STRING);
+	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	if(input->cadr->type==SFS_NUMBER){
+		sprintf(result->this.string,"%d",input->cadr->this.number.this.integer);
+		return result;
+	}
+	WARNING_MSG("Vous essayez de convertir un type qui n'est pas un nombre");
+	return input;
+}
+
 object conv_string_to_symbol(object input)
 {	
 
