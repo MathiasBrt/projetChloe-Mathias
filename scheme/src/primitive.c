@@ -649,9 +649,9 @@ object eq_poly(object input)
 	{
 		input->cadr=sfs_eval(input->cadr);
 	}
-
+	if(input->caddr->type==SFS_PAIR) input->caddr=sfs_eval(input->caddr);
 	while(input->cddr->type!=SFS_NIL)
-	{
+	{	
 		if(input->cadr->type==input->caddr->type)
 		{	
 			switch(input->cadr->type)
@@ -685,10 +685,10 @@ object eq_poly(object input)
 						resultat->this.boolean=FALSE;
 						return resultat;
 					}break;
-
-				case 0x03 :
-
-					input->cadr=sfs_eval(input->cadr);
+				
+				case SFS_NIL :
+					resultat->this.boolean=TRUE;
+					break;
 
 				case 0x05 : 
 					if(input->cadr->this.boolean==input->caddr->this.boolean) 
@@ -711,6 +711,10 @@ object eq_poly(object input)
 			}
 			input=input->this.pair.cdr;
 			
+		}
+		else{
+			resultat->this.boolean=FALSE;
+			input=input->this.pair.cdr;
 		}
 	
 	}return resultat;
