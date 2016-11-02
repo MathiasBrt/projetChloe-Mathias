@@ -154,6 +154,10 @@ object init_top_level(void){
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"stringtonumber"); valeur->this.primitive=conv_string_to_number;
 	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"car"); valeur->this.primitive=car;
+	env=ajout_queue_var(env,forme,valeur);
+	strcpy(forme->this.symbol,"cdr"); valeur->this.primitive=cdr;
+	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"set-car!"); valeur->this.primitive=set_car;
 	env=ajout_queue_var(env,forme,valeur);
 	strcpy(forme->this.symbol,"set-cdr!"); valeur->this.primitive=set_cdr;
