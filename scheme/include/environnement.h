@@ -20,6 +20,7 @@ BOOL est_vide_var(object env);
 object recherche_env(object env, string variable);
 object recherche(object env, string variable);
 object ajout_queue_var(object env, object variable, object valeur);
+object association(object env, object variable);
 void affiche_var(object variable);
 
 /* fonction d'initialisation de l'environnement top level */

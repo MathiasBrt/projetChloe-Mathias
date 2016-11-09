@@ -644,19 +644,22 @@ object new_list(object input)
 object eq_poly(object input)
 {
 	object resultat=make_object(SFS_BOOLEAN);
+	object env_courant=creer_env();
+	env_courant=toplevel;
 
-	if(input->cadr->type==SFS_PAIR)
-	{
-		input->cadr=sfs_eval(input->cadr);
-	}
-	if(input->caddr->type==SFS_PAIR) input->caddr=sfs_eval(input->caddr);
 	while(input->cddr->type!=SFS_NIL)
 	{	
+		/* on remplace les éléments non auto évaluants (les pairs et les symbols) par leur valeur */
+		if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+		if(input->caddr->type==SFS_PAIR) input->caddr=sfs_eval(input->caddr);
+		if(input->cadr->type==SFS_SYMBOL) input->cadr=association(env_courant,input->cadr);
+		if(input->caddr->type==SFS_SYMBOL) input->caddr=association(env_courant,input->caddr);
+		
+		/* on regarde si les types sont égaux */
 		if(input->cadr->type==input->caddr->type)
 		{	
 			switch(input->cadr->type)
-			{
-				
+			{		
 				case 0x00 : 
 					if(input->cadr->this.number.this.integer==input->caddr->this.number.this.integer) 
 					resultat->this.boolean=1;
@@ -678,7 +681,7 @@ object eq_poly(object input)
 					}break;
 
 				case 0x02 : 
-					if(strcpy(input->cadr->this.string,input->caddr->this.string)!=0) 
+					if(!strcmp(input->cadr->this.string,input->caddr->this.string)) 
 						resultat->this.boolean=TRUE;
 					else 
 					{
@@ -686,7 +689,7 @@ object eq_poly(object input)
 						return resultat;
 					}break;
 				
-				case SFS_NIL :
+				case 0x04 :
 					resultat->this.boolean=TRUE;
 					break;
 
@@ -698,16 +701,16 @@ object eq_poly(object input)
 						resultat->this.boolean=FALSE;
 						return resultat;
 					}break;
-
+								
 				case 0x06 :
-					if(strcpy(input->cadr->this.symbol,input->caddr->this.symbol)!=0) 
+					if(!strcmp(input->cadr->this.symbol,input->caddr->this.symbol)) 
 						resultat->this.boolean=TRUE;
 					else 
 					{
 						resultat->this.boolean=FALSE;
 						return resultat;
 					}break;
-					
+									
 			}
 			input=input->this.pair.cdr;
 			
