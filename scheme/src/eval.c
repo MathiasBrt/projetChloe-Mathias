@@ -16,13 +16,19 @@ object toplevel;
 
 object sfs_eval( object input ) {
 
-	if(input->type==SFS_SYMBOL) return input;
+	
 	
 	object p=creer_env();
 	object env_courant=creer_env();
 	env_courant=toplevel;
 
 	eval:
+	
+	if(input->type==SFS_SYMBOL){
+		p=recherche_env(env_courant,input->this.symbol);
+		if (p==NULL) return input;
+		return p->this.pair.cdr;
+	}
 	
 	if(input->type==SFS_PAIR){
 	

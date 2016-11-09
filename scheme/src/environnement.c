@@ -74,6 +74,7 @@ object ajout_queue_var(object env, object variable, object valeur){
 		case 0x00: nv_var->this.pair.cdr->this.number=valeur->this.number; break;
 		case 0x01: nv_var->this.pair.cdr->this.character=valeur->this.character; break;
 		case 0x02: strcpy(nv_var->this.pair.cdr->this.string,valeur->this.string); break;
+		case 0x03: nv_var->this.pair.cdr=valeur; break;
 		case 0x05: nv_var->this.pair.cdr->this.boolean=valeur->this.boolean; break;
 		case 0x06: strcpy(nv_var->this.pair.cdr->this.symbol,valeur->this.symbol); break;
 		case 0x08: nv_var->this.pair.cdr->this.primitive=valeur->this.primitive; break;
@@ -87,9 +88,9 @@ object ajout_queue_var(object env, object variable, object valeur){
 }
 
 void affiche_var(object variable){
-	sfs_print_atom(variable->this.pair.car);
+	sfs_print(variable->this.pair.car);
 	printf(" a la valeur ");
-	sfs_print_atom(variable->this.pair.cdr);
+	sfs_print(variable->this.pair.cdr);
 	printf("\n");
 }
 
