@@ -163,7 +163,7 @@ object egal(object input)
 	if(input->cadr->type==SFS_SYMBOL)
 	{
 		p=recherche(toplevel,input->cadr->this.symbol);
-		if(p->this.pair.cdr->type==SFS_NUMBER)
+		if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER)
 		{
 			if(p->this.pair.cdr->this.number.this.integer==input->caddr->this.number.this.integer)
 			{
@@ -175,24 +175,31 @@ object egal(object input)
 				return resultat;
 			}
 		}
-		else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+		else {
+		    WARNING_MSG("Pas de nombre à comparer");
+		    return nil;
+		}
 						
 	}
 
-		if(input->cadr->type==SFS_NUMBER)
-		{
-			if(input->cadr->this.number.this.integer==input->caddr->this.number.this.integer)
-			{
-				resultat->this.boolean=1;
-				
-			}
-			else 
-			{
-				resultat->this.boolean=0;
-				return resultat;
-			}
-
-		}
+	else if(input->cadr->type==SFS_NUMBER)
+	{
+	       	if(input->cadr->this.number.this.integer==input->caddr->this.number.this.integer)
+       		{
+	       		resultat->this.boolean=1;
+       			
+       		}
+       		else 
+	       	{
+       			resultat->this.boolean=0;
+       			return resultat;
+       		}
+		
+       	}
+	else{
+	    WARNING_MSG("Pas de nombre à comparer");
+	    return nil;
+	}
 
 	while(input->cddr->type!=SFS_NIL)
 	{
@@ -206,7 +213,7 @@ object egal(object input)
 		if(input->this.pair.car->type==SFS_SYMBOL)
 		{
 			p=recherche(toplevel,input->this.pair.car->this.symbol);
-			if(p->this.pair.cdr->type==SFS_NUMBER)
+			if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER)
 			{
 				if(p->this.pair.cdr->this.number.this.integer==input->cadr->this.number.this.integer)
 				{
@@ -218,11 +225,14 @@ object egal(object input)
 					return resultat;
 				}
 			}
-			else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+			else {
+			    WARNING_MSG("Pas de nombre à comparer");
+			    return nil;
+			}
 						
 		}
 
-		if(input->this.pair.car->type==SFS_NUMBER)
+		else if(input->this.pair.car->type==SFS_NUMBER)
 		{
 			if(input->this.pair.car->this.number.this.integer==input->cadr->this.number.this.integer)
 			{
@@ -235,6 +245,10 @@ object egal(object input)
 				return resultat;
 			}
 
+		}
+		else{
+		    WARNING_MSG("Pas de nombre à comparer");
+		    return nil;
 		}
 	}return resultat;
 			
@@ -255,17 +269,23 @@ object inf(object input)
 					if(input->this.pair.car->type==SFS_PAIR){
 						input->this.pair.car=sfs_eval(input->this.pair.car);
 					}
-					else if(input->this.pair.car->type==SFS_SYMBOL){
+					if(input->this.pair.car->type==SFS_SYMBOL){
 						p=recherche(toplevel,input->this.pair.car->this.symbol);
-						if(p->this.pair.cdr->type==SFS_NUMBER){
+						if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 							operande1->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+						    WARNING_MSG("Pas de nombre à comparer");
+						    return nil;
+						}
 					}
 					else if(input->this.pair.car->type==SFS_NUMBER){
 						operande1->this.number.this.integer=input->this.pair.car->this.number.this.integer;
 					}
-					else ERROR_MSG("Pas de nombre à comparer");
+					else {
+					    WARNING_MSG("Pas de nombre à comparer");
+					    return nil;
+					}
 				}
 				
 				while(input->this.pair.cdr->type!=SFS_NIL && resultat->this.boolean==TRUE){
@@ -275,17 +295,23 @@ object inf(object input)
 						if(input->this.pair.car->type==SFS_PAIR){
 							input->this.pair.car=sfs_eval(input->this.pair.car);
 						}
-						else if(input->this.pair.car->type==SFS_SYMBOL){
+						if(input->this.pair.car->type==SFS_SYMBOL){
 							p=recherche(toplevel,input->this.pair.car->this.symbol);
-							if(p->this.pair.cdr->type==SFS_NUMBER){
+							if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 								operande2->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 							}
-							else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							else {
+							    WARNING_MSG("Pas de nombre à comparer");
+							    return nil;
+							}
 						}
 						else if(input->this.pair.car->type==SFS_NUMBER){
 							operande2->this.number.this.integer=input->this.pair.car->this.number.this.integer;
 						}
-						else ERROR_MSG("Pas de nombre à comparer");
+						else {
+						    WARNING_MSG("Pas de nombre à comparer");
+						    return nil;
+						}
 					}
 					resultat->this.boolean= (operande1->this.number.this.integer < operande2->this.number.this.integer) ? TRUE:FALSE;
 					operande1->this.number.this.integer = operande2->this.number.this.integer;
@@ -308,17 +334,24 @@ object sup(object input)
 					if(input->this.pair.car->type==SFS_PAIR){
 						input->this.pair.car=sfs_eval(input->this.pair.car);
 					}
-					else if(input->this.pair.car->type==SFS_SYMBOL){
+					if(input->this.pair.car->type==SFS_SYMBOL){
 						p=recherche(toplevel,input->this.pair.car->this.symbol);
-						if(p->this.pair.cdr->type==SFS_NUMBER){
+						if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 							operande1->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+						    WARNING_MSG("Pas de nombre à comparer");
+						    return nil;
+						}
 					}
 					else if(input->this.pair.car->type==SFS_NUMBER){
 						operande1->this.number.this.integer=input->this.pair.car->this.number.this.integer;
 					}
-					else ERROR_MSG("Pas de nombre à comparer");
+					else {
+					    WARNING_MSG("Pas de nombre à comparer");
+					    return nil;
+					}
+					
 				}
 				
 				while(input->this.pair.cdr->type!=SFS_NIL && resultat->this.boolean==TRUE){
@@ -328,17 +361,23 @@ object sup(object input)
 						if(input->this.pair.car->type==SFS_PAIR){
 							input->this.pair.car=sfs_eval(input->this.pair.car);
 						}
-						else if(input->this.pair.car->type==SFS_SYMBOL){
+						if(input->this.pair.car->type==SFS_SYMBOL){
 							p=recherche(toplevel,input->this.pair.car->this.symbol);
-							if(p->this.pair.cdr->type==SFS_NUMBER){
+							if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 								operande2->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 							}
-							else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							else {
+							    WARNING_MSG("Pas de nombre à comparer");
+							    return nil;
+							}
 						}
 						else if(input->this.pair.car->type==SFS_NUMBER){
 							operande2->this.number.this.integer=input->this.pair.car->this.number.this.integer;
 						}
-						else ERROR_MSG("Pas de nombre à comparer");
+						else {
+						    WARNING_MSG("Pas de nombre à comparer");
+						    return nil;
+						}
 					}
 					resultat->this.boolean= (operande1->this.number.this.integer > operande2->this.number.this.integer) ? TRUE:FALSE;
 					operande1->this.number.this.integer = operande2->this.number.this.integer;
