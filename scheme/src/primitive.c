@@ -387,15 +387,20 @@ object sup(object input)
 
 object est_null(object input){
 	object resultat=make_object(SFS_BOOLEAN);
-	if(input->this.pair.cdr->type!=SFS_NIL){
-		resultat->this.boolean= (input->cadr->type==SFS_NIL) ? TRUE:FALSE;
+	resultat->this.boolean=TRUE;
+	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL){
+		if(input->this.pair.cdr->type!=SFS_NIL){
+			resultat->this.boolean= (input->cadr->type==SFS_NIL) ? TRUE:FALSE;
+		}
+		input=input->this.pair.cdr;
 	}
 	return resultat;
 }
 
 object est_boolean(object input){
 	object resultat=make_object(SFS_BOOLEAN);
-	while(input->this.pair.cdr->type!=SFS_NIL)
+	resultat->this.boolean=TRUE;
+	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL)
 	{
 		if(input->this.pair.cdr->type!=SFS_NIL){
 			resultat->this.boolean= (input->cadr->type==SFS_BOOLEAN) ? TRUE:FALSE;
@@ -407,7 +412,8 @@ object est_boolean(object input){
 
 object est_symbol(object input){
 	object resultat=make_object(SFS_BOOLEAN);
-	while(input->this.pair.cdr->type!=SFS_NIL)
+	resultat->this.boolean=TRUE;
+	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL)
 	{
 		if(input->this.pair.cdr->type!=SFS_NIL){
 			resultat->this.boolean= (input->cadr->type==SFS_SYMBOL) ? TRUE:FALSE;

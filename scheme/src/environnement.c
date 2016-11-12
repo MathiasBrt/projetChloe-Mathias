@@ -41,6 +41,8 @@ object association(object env, object variable){
 	return resultat;
 }
 
+
+/* Ajoute un nouvel environnement en queue de la liste des environnements existants */
 object ajout_queue_env(object env){
 	object nv_env=creer_env();
 	object p=creer_env();
@@ -63,6 +65,8 @@ BOOL est_vide_var(object variable){
 	return !variable;
 }
 
+
+/* Recherche si une variable existe dans un environnement donné et renvoie le maillon correspondant, ie un objet SFS_ENVIRONNEMENT dont le car est la variable et le cdr est la valeur. Dans le cas contraire, NULL est retourné */
 object recherche_env(object env, string variable){
 	object p=creer_env();
 	p=env->var_suiv;
@@ -73,6 +77,8 @@ object recherche_env(object env, string variable){
 	return p;
 }
 
+
+/* Itération de la fonction précédente sur tous les environnements. La valeur de retour est identique. */
 object recherche(object env, string variable){
 	object p=env;
 	object result;
@@ -81,9 +87,11 @@ object recherche(object env, string variable){
 		if(result!=NULL) return result;
 		p=p->env_suiv;
 	}
-	ERROR_MSG("Unbound variable '%s'",variable);
+	return p;
 }
 
+
+/* Fonction d'ajout d'une variable à un environnement. Elle est ajoutée à la fin de celui-ci. */
 object ajout_queue_var(object env, object variable, object valeur){
 	object nv_var=creer_env();
 	nv_var->this.pair.car=make_object(SFS_SYMBOL);
@@ -93,6 +101,7 @@ object ajout_queue_var(object env, object variable, object valeur){
 		case 0x00: nv_var->this.pair.cdr->this.number=valeur->this.number; break;
 		case 0x01: nv_var->this.pair.cdr->this.character=valeur->this.character; break;
 		case 0x02: strcpy(nv_var->this.pair.cdr->this.string,valeur->this.string); break;
+		case 0x03: nv_var->this.pair.cdr=valeur; break;
 		case 0x05: nv_var->this.pair.cdr->this.boolean=valeur->this.boolean; break;
 		case 0x06: strcpy(nv_var->this.pair.cdr->this.symbol,valeur->this.symbol); break;
 		case 0x08: nv_var->this.pair.cdr->this.primitive=valeur->this.primitive; break;
@@ -105,13 +114,17 @@ object ajout_queue_var(object env, object variable, object valeur){
 	return env;
 }
 
+
+/* Fonction d'affichage d'une variable */
 void affiche_var(object variable){
-	sfs_print_atom(variable->this.pair.car);
+	sfs_print(variable->this.pair.car);
 	printf(" a la valeur ");
-	sfs_print_atom(variable->this.pair.cdr);
+	sfs_print(variable->this.pair.cdr);
 	printf("\n");
 }
 
+
+/* Fonction d'initialisation du toplevel. Y stocke les formes courantes comme des entiers (arbitraire) et les primitives comme des pointeurs de fonction. Pour implémenter une nouvelle primitive, il faut l'ajouter ici. */
 object init_top_level(void){
 	object env=creer_env();
 	object forme=make_object(SFS_PRIMITIVE);
