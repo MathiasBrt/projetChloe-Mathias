@@ -24,27 +24,32 @@ object sfs_eval( object input ) {
 
 	eval:
 	
+	 /*Renvoie la valeur de la variable, si elle existe*/
 	if(input->type==SFS_SYMBOL){
 		p=recherche_env(env_courant,input->this.symbol);
 		if (p==NULL) return input;
 		return p->this.pair.cdr;
 	}
-	
+	/*Dans le cas s'une paire*/
 	if(input->type==SFS_PAIR){
-	
+
+			/*Test si le car est un symbol*/
 			if(input->this.pair.car->type==SFS_SYMBOL)
 			{
+				/*Recherche dans l'environnement courant*/
 				p=recherche_env(env_courant,input->this.pair.car->this.symbol);
-				if(p==NULL) return input;
+				if(p==NULL) return input; /*Renvoie l'entrée si le symbol n'existe pas*/
 
+				/* Test si le cdr est une primitive */
 				if(p->this.pair.cdr->type==SFS_PRIMITIVE)
 				{
 
-					object (*prim)(object);
-					prim = p->this.pair.cdr->this.primitive;
+					object (*prim)(object); /* Pointeur de fonction */
+					prim = p->this.pair.cdr->this.primitive; /* Association de la fonction */
 					return prim(input);
 				}
 
+				/* Test de la gestion de casse => Forme écrite obligatoirement en minuscule */
 				if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
 				{
 					WARNING_MSG("La forme est certainement en majuscule !");
@@ -52,7 +57,7 @@ object sfs_eval( object input ) {
 
 				}
 
-				/* forme quote */
+				/* Forme quote, elle n'évalue paas la l'expression, elle renvoie les arguments  */
 				if (strcmp(input->this.pair.car->this.symbol,"quote")==0){
 					if (input->this.pair.cdr->type != SFS_NIL)
 					{
@@ -70,12 +75,15 @@ object sfs_eval( object input ) {
 				
 				object et_logique=make_object(SFS_BOOLEAN);
 				
+				/* Si premier test faux, on renvoie faux */
 				if(predicat(input->cadr)  == 0) 
 				{
 			
 					et_logique->this.boolean= 0;
 					return et_logique;
 				}
+
+				/* Si deuxième test vrai, on renvoie vrai*/
 				if(predicat(input->caddr)  == 1)
 				{
 					
@@ -83,6 +91,7 @@ object sfs_eval( object input ) {
 					return et_logique;
 				}
 
+				/*Sinon, on renvoie faux*/
 				else 
 				{
 					et_logique->this.boolean = 0;
@@ -96,12 +105,15 @@ object sfs_eval( object input ) {
 				
 				object et_logique=make_object(SFS_BOOLEAN);
 				
+				/* Si premier test vrai, on renvoie vrai */
 				if(predicat(input->cadr) == 1) 
 				{
 					
 					et_logique->this.boolean= 1;
 					return et_logique;
 				}
+
+				/* Si deuxème test faux, on renvoie faux*/
 				if(predicat(input->caddr)  == 0)
 				{
 					
@@ -109,6 +121,7 @@ object sfs_eval( object input ) {
 					return et_logique;
 				}
 
+				/*Sinon, on renvoie vrai*/
 				else 
 				{
 					et_logique->this.boolean = 1;
@@ -128,7 +141,7 @@ object sfs_eval( object input ) {
 					{
 						
 						input = input->caddr;
-						goto eval;
+						goto eval; 
 					}
 					if(!predicat(sfs_eval(input->cadr->this.pair.car)))
 					{

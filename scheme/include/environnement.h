@@ -22,6 +22,7 @@ object recherche(object env, string variable);
 object ajout_queue_var(object env, object variable, object valeur);
 object association(object env, object variable);
 void affiche_var(object variable);
+object parcours_env( object env);
 
 /* fonction d'initialisation de l'environnement top level */
 object init_top_level(void);

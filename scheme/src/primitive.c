@@ -646,7 +646,7 @@ object set_car(object input)
 	object env_courant=creer_env();
 	env_courant=toplevel;
 
-if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.car->type==SFS_SYMBOL)
+	if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.car->type==SFS_SYMBOL)
 	{
 		object p=creer_env();
 		p=recherche_env(env_courant,input->cadr->this.pair.car->this.symbol);

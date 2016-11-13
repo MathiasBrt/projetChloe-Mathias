@@ -45,8 +45,9 @@ void sfs_print_atom( object o ) {
 
         case SFS_ENVIRONNEMENT :
             affiche_env(o);
+
         case SFS_PRIMITIVE:
-        	printf("%p",o->this.primitive); break;
+             break;
             
     }
     return;

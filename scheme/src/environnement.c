@@ -13,6 +13,8 @@ BOOL est_vide_env(object env){
 	return !env;
 }
 
+/* Affiche tout l'environnement */ 
+
 void affiche_env(object env){
 	object p=creer_env();
 	p=env->var_suiv;
@@ -20,6 +22,16 @@ void affiche_env(object env){
 		affiche_var(p);
 		p=p->var_suiv;
 	}
+}
+
+object parcours_env( object env)
+{
+	object p=creer_env();
+	p=env->var_suiv;
+	while(!est_vide_var(p->var_suiv)){
+		p=p->var_suiv;
+	}
+	return p;
 }
 
 /* Associe une variable à sa valeur (si elle existe). Le résultat est un nouvel objet indépendant pour éviter les risques de modifications involontaires */
