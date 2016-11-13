@@ -630,15 +630,21 @@ return input;
 }
 
 object car(object input){
+    if (input->cadr->type==SFS_PAIR){
+	input->cadr=sfs_eval(input->cadr);
 	if (input->cadr->type==SFS_PAIR) return input->cadr->this.pair.car;
-	else WARNING_MSG("Ce n'est pas une paire");
-	return input;
+    }
+    WARNING_MSG("Ce n'est pas une paire");
+    return input;
 }
 
 object cdr(object input){
-	if (input->cadr->type==SFS_PAIR) return input->cadr->this.pair.cdr->this.pair.car;
-	else WARNING_MSG("Ce n'est pas une paire");
-	return input;
+    if (input->cadr->type==SFS_PAIR){
+	input->cadr=sfs_eval(input->cadr);
+	if(input->cadr->type==SFS_PAIR) return input->cadr->this.pair.cdr;
+    }
+    WARNING_MSG("Ce n'est pas une paire");
+    return input;
 }
 
 object set_car(object input)
