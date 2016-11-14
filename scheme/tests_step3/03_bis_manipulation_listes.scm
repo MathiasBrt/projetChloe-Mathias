@@ -9,4 +9,4 @@
 (define a 1)
 (define b 2)
 (set-car! (a b) 3)
-(set-cdr! ((set-car! (a b) 4) b) 4)
+(set-cdr! (a b) 4)

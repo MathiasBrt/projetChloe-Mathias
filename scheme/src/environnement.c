@@ -24,6 +24,8 @@ void affiche_env(object env){
 	}
 }
 
+/* Renvoie la denrière variable */
+
 object parcours_env( object env)
 {
 	object p=creer_env();
