@@ -152,106 +152,66 @@ object sous(object input)
 object egal(object input)
 
 {
-	object p=creer_env();
-	object resultat=make_object(SFS_BOOLEAN);
-
-	if(input->cadr->type==SFS_PAIR)
-	{
-		input->cadr=sfs_eval(input->cadr);
-	}
+				object p=creer_env();
+				object resultat=make_object(SFS_BOOLEAN);
+				resultat->this.boolean=TRUE;
+				object operande1=make_object(SFS_NUMBER);
+				object operande2=make_object(SFS_NUMBER);
 				
-	if(input->cadr->type==SFS_SYMBOL)
-	{
-		p=recherche(toplevel,input->cadr->this.symbol);
-		if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER)
-		{
-			if(p->this.pair.cdr->this.number.this.integer==input->caddr->this.number.this.integer)
-			{
-				resultat->this.boolean=1;	
-			}
-			else 
-			{
-				resultat->this.boolean=0;
-				return resultat;
-			}
-		}
-		else {
-		    WARNING_MSG("Pas de nombre à comparer");
-		    return nil;
-		}
-						
-	}
-
-	else if(input->cadr->type==SFS_NUMBER)
-	{
-	       	if(input->cadr->this.number.this.integer==input->caddr->this.number.this.integer)
-       		{
-	       		resultat->this.boolean=1;
-       			
-       		}
-       		else 
-	       	{
-       			resultat->this.boolean=0;
-       			return resultat;
-       		}
-		
-       	}
-	else{
-	    WARNING_MSG("Pas de nombre à comparer");
-	    return nil;
-	}
-
-	while(input->cddr->type!=SFS_NIL)
-	{
-		input=input->this.pair.cdr;
-
-		if(input->this.pair.car->type==SFS_PAIR)
-		{
-			input->this.pair.car=sfs_eval(input->this.pair.car);
-		}
 				
-		if(input->this.pair.car->type==SFS_SYMBOL)
-		{
-			p=recherche(toplevel,input->this.pair.car->this.symbol);
-			if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER)
-			{
-				if(p->this.pair.cdr->this.number.this.integer==input->cadr->this.number.this.integer)
-				{
-					resultat->this.boolean=1;	
+				if(input->this.pair.cdr->type!=SFS_NIL){
+					input=input->this.pair.cdr;
+					if(input->this.pair.car->type==SFS_PAIR){
+						input->this.pair.car=sfs_eval(input->this.pair.car);
+					}
+					if(input->this.pair.car->type==SFS_SYMBOL){
+						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
+							operande1->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
+						}
+						else {
+						    WARNING_MSG("Pas de nombre à comparer");
+						    return nil;
+						}
+					}
+					else if(input->this.pair.car->type==SFS_NUMBER){
+						operande1->this.number.this.integer=input->this.pair.car->this.number.this.integer;
+					}
+					else {
+					    WARNING_MSG("Pas de nombre à comparer");
+					    return nil;
+					}
 				}
-				else 
-				{
-					resultat->this.boolean=0;
-					return resultat;
-				}
-			}
-			else {
-			    WARNING_MSG("Pas de nombre à comparer");
-			    return nil;
-			}
-						
-		}
-
-		else if(input->this.pair.car->type==SFS_NUMBER)
-		{
-			if(input->this.pair.car->this.number.this.integer==input->cadr->this.number.this.integer)
-			{
-				resultat->this.boolean=1;
 				
-			}
-			else 
-			{
-				resultat->this.boolean=0;
-				return resultat;
-			}
+				while(input->this.pair.cdr->type!=SFS_NIL && resultat->this.boolean==TRUE){
 
-		}
-		else{
-		    WARNING_MSG("Pas de nombre à comparer");
-		    return nil;
-		}
-	}return resultat;
-			
+					if(input->this.pair.cdr->type!=SFS_NIL){
+						input=input->this.pair.cdr;
+						if(input->this.pair.car->type==SFS_PAIR){
+							input->this.pair.car=sfs_eval(input->this.pair.car);
+						}
+						if(input->this.pair.car->type==SFS_SYMBOL){
+							p=recherche(toplevel,input->this.pair.car->this.symbol);
+							if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
+								operande2->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
+							}
+							else {
+							    WARNING_MSG("Pas de nombre à comparer");
+							    return nil;
+							}
+						}
+						else if(input->this.pair.car->type==SFS_NUMBER){
+							operande2->this.number.this.integer=input->this.pair.car->this.number.this.integer;
+						}
+						else {
+						    WARNING_MSG("Pas de nombre à comparer");
+						    return nil;
+						}
+					}
+					resultat->this.boolean= (operande1->this.number.this.integer == operande2->this.number.this.integer) ? TRUE:FALSE;
+					operande1->this.number.this.integer = operande2->this.number.this.integer;
+				}
+				return resultat;
 }
 
 object inf(object input)
@@ -640,7 +600,7 @@ return input;
 object car(object input){
 	if (input->cadr->type==SFS_PAIR) 
 	{
-		input->cadr=sfs=eval(input->cadr);
+		input->cadr=sfs_eval(input->cadr);
 		if(input->cadr->type==SFS_PAIR)return input->cadr->this.pair.car;
 	}
 	
