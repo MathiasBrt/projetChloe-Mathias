@@ -9,7 +9,7 @@
 (boolean? #t)
 (boolean? #f)
 (boolean? "boolean?")
-(boolean? (and #t #t))
+(boolean? (and #t #t))
 (boolean? (or #f #f))
 (symbol? symbol)
 

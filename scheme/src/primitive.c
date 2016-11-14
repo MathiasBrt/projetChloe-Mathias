@@ -390,7 +390,8 @@ object est_null(object input){
 	resultat->this.boolean=TRUE;
 	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL){
 		if(input->this.pair.cdr->type!=SFS_NIL){
-			resultat->this.boolean= (input->cadr->type==SFS_NIL) ? TRUE:FALSE;
+		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+		    resultat->this.boolean= (input->cadr->type==SFS_NIL) ? TRUE:FALSE;
 		}
 		input=input->this.pair.cdr;
 	}
@@ -403,7 +404,8 @@ object est_boolean(object input){
 	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL)
 	{
 		if(input->this.pair.cdr->type!=SFS_NIL){
-			resultat->this.boolean= (input->cadr->type==SFS_BOOLEAN) ? TRUE:FALSE;
+		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+		    resultat->this.boolean= (input->cadr->type==SFS_BOOLEAN) ? TRUE:FALSE;
 		}
 		input=input->this.pair.cdr;
 	}
@@ -416,7 +418,8 @@ object est_symbol(object input){
 	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL)
 	{
 		if(input->this.pair.cdr->type!=SFS_NIL){
-			resultat->this.boolean= (input->cadr->type==SFS_SYMBOL) ? TRUE:FALSE;
+		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+		    resultat->this.boolean= (input->cadr->type==SFS_SYMBOL) ? TRUE:FALSE;
 		}input=input->this.pair.cdr;
 	}
 	return resultat;
@@ -428,6 +431,7 @@ object est_pair(object input)
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
 		if (input->cadr->type==SFS_PAIR)
 		{
 			resultat->this.boolean=TRUE;
@@ -449,6 +453,7 @@ object est_string(object input)
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
 		if (input->cadr->type==SFS_STRING)
 		{
 			resultat->this.boolean=TRUE;
@@ -472,6 +477,7 @@ object est_character(object input)
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
 		if (input->cadr->type==SFS_CHARACTER)
 		{
 			resultat->this.boolean=TRUE;
@@ -492,6 +498,7 @@ object est_integer(object input)
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
 		if (input->cadr->type==SFS_NUMBER)
 		{
 			resultat->this.boolean=TRUE;
@@ -514,6 +521,7 @@ object est_primitive(object input)
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
 		p=recherche(toplevel,input->cadr->this.symbol);
 
 		if (p->this.pair.cdr->type==SFS_PRIMITIVE)
