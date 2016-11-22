@@ -34,13 +34,23 @@ typedef struct object_t {
         string           string;
         string           symbol;
         BOOL             boolean;
-		struct object_t* (*primitive)(struct object_t*);
+		struct object_t* (*primitive)(struct object_t*, struct object_t*);
+
         struct pair_t {
             struct object_t *car;
             struct object_t *cdr;
         }                pair;
         struct object_t *special;
+
+        struct 
+        {
+            struct object_t* parms;
+            struct object_t* body;
+            struct object_t* env;
+        }compound;
+
     } this;
+
     struct object_t *env_suiv;
     struct object_t *var_suiv;
 
@@ -59,6 +69,7 @@ object make_nil( void );
 #define SFS_SYMBOL       0x06
 #define SFS_ENVIRONNEMENT 0x07
 #define SFS_PRIMITIVE 0x08
+#define SFS_COMPOUND 0x09
 
 #define cadr this.pair.cdr->this.pair.car
 #define caar this.pair.car->this.pair.car

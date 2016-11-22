@@ -11,42 +11,64 @@
 #include "eval.h"
 #include "object.h"
 #include "environnement.h"
+#include "print.h"
 
 object toplevel;
 
-object sfs_eval( object input ) {
+object sfs_eval( object input, object env_courant ) {
 
 	
 	
 	object p=creer_env();
-	object env_courant=creer_env();
-	env_courant=toplevel;
+	
 
 	eval:
 	
 	 /*Renvoie la valeur de la variable, si elle existe*/
 	if(input->type==SFS_SYMBOL){
-		p=recherche_env(env_courant,input->this.symbol);
+		p=recherche(env_courant,input->this.symbol);
 		if (p==NULL) return input;
 		return p->this.pair.cdr;
 	}
 	/*Dans le cas s'une paire*/
 	if(input->type==SFS_PAIR){
+			if(input->this.pair.car->type==SFS_PAIR)
+			{
+				input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
+			}
+
+			if(input->this.pair.car->type==SFS_COMPOUND)
+			{
+				env_courant=ajout_tete_env(env_courant);
+				sfs_print_atom(input->this.pair.car);
+
+				env_courant=ajout_queue_var(env_courant,input->this.pair.car->this.compound.parms->this.pair.car, input->cadr);
+				sfs_print_atom(env_courant);
+				printf("Bonjour");
+
+				object resultat = sfs_eval(input->this.pair.car->this.compound.body,env_courant);
+				printf("Bonjour 2.0");
+				env_courant=env_courant->env_suiv;
+				sfs_print_atom(resultat);
+
+				return resultat;
+			}
 
 			/*Test si le car est un symbol*/
 			if(input->this.pair.car->type==SFS_SYMBOL)
 			{
 				/*Recherche dans l'environnement courant*/
-				p=recherche_env(env_courant,input->this.pair.car->this.symbol);
+				p=recherche(env_courant,input->this.pair.car->this.symbol);
+
 				if(p==NULL) return input; /*Renvoie l'entrée si le symbol n'existe pas*/
 
 				/* Test si le cdr est une primitive */
 				if(p->this.pair.cdr->type==SFS_PRIMITIVE)
 				{
 
-					object (*prim)(object); /* Pointeur de fonction */
+					object (*prim)(object,object); /* Pointeur de fonction */
 					prim = p->this.pair.cdr->this.primitive; /* Association de la fonction */
-					return prim(input);
+					return prim(input, env_courant);
 				}
 
 				/* Test de la gestion de casse => Forme écrite obligatoirement en minuscule */
@@ -58,7 +80,8 @@ object sfs_eval( object input ) {
 				}
 
 				/* Forme quote, elle n'évalue paas la l'expression, elle renvoie les arguments  */
-				if (strcmp(input->this.pair.car->this.symbol,"quote")==0){
+				if (strcmp(input->this.pair.car->this.symbol,"quote")==0)
+				{
 					if (input->this.pair.cdr->type != SFS_NIL)
 					{
 					
@@ -68,7 +91,60 @@ object sfs_eval( object input ) {
 					} 			
 
 				else WARNING_MSG (" Rien à recopier");
-			}	
+				}	
+
+			/* forme begin */
+			if(strcmp(input->this.pair.car->this.symbol,"begin")==0)
+			{
+				object resultat;
+
+				while(input->this.pair.cdr->type!=SFS_NIL)
+				{
+					input=input->this.pair.cdr;
+					resultat=sfs_eval(input->this.pair.car,env_courant);
+
+					
+				} return resultat;
+			}
+
+
+			/* Forme lambda */
+			if(strcmp(input->this.pair.car->this.symbol,"lambda")==0)
+			{
+				object agregat=make_object(SFS_COMPOUND);
+				input=input->this.pair.cdr;
+
+
+				if(input->this.pair.car->type==SFS_PAIR)
+				{
+					agregat->this.compound.parms=input->this.pair.car;
+				}
+
+				else 
+
+				{
+				WARNING_MSG("Attention, la syntaxe des paramètres de fonction ne sont pas corrects");
+
+				return nil;
+				}
+
+				if(input->this.pair.cdr->type==SFS_PAIR)
+
+				{
+					agregat->this.compound.body=input->this.pair.cdr;
+				}
+
+				else
+				{
+					WARNING_MSG("Attention, la syntaxe de la fonction n'est pas correct");
+
+				return nil;
+				}
+
+				agregat->this.compound.env=env_courant;
+
+				return agregat;
+			}
 			/* forme and */
 			if(strcmp(input->this.pair.car->this.symbol,"and")==0)
 			{
@@ -76,7 +152,7 @@ object sfs_eval( object input ) {
 				object et_logique=make_object(SFS_BOOLEAN);
 				
 				/* Si premier test faux, on renvoie faux */
-				if(predicat(input->cadr)  == 0) 
+				if(predicat(input->cadr,env_courant)  == 0) 
 				{
 			
 					et_logique->this.boolean= 0;
@@ -84,7 +160,7 @@ object sfs_eval( object input ) {
 				}
 
 				/* Si deuxième test vrai, on renvoie vrai*/
-				if(predicat(input->caddr)  == 1)
+				if(predicat(input->caddr,env_courant)  == 1)
 				{
 					
 					et_logique->this.boolean = 1;
@@ -106,7 +182,7 @@ object sfs_eval( object input ) {
 				object et_logique=make_object(SFS_BOOLEAN);
 				
 				/* Si premier test vrai, on renvoie vrai */
-				if(predicat(input->cadr) == 1) 
+				if(predicat(input->cadr,env_courant) == 1) 
 				{
 					
 					et_logique->this.boolean= 1;
@@ -114,7 +190,7 @@ object sfs_eval( object input ) {
 				}
 
 				/* Si deuxème test faux, on renvoie faux*/
-				if(predicat(input->caddr)  == 0)
+				if(predicat(input->caddr,env_courant)  == 0)
 				{
 					
 					et_logique->this.boolean = 0;
@@ -137,13 +213,13 @@ object sfs_eval( object input ) {
 				if(input->cadr->type==SFS_PAIR)
 
 				{
-					if(sfs_eval(input->cadr->this.pair.car)->this.boolean==1)
+					if(sfs_eval(input->cadr->this.pair.car,env_courant)->this.boolean==1)
 					{
 						
 						input = input->caddr;
 						goto eval; 
 					}
-					if(!predicat(sfs_eval(input->cadr->this.pair.car)))
+					if(!predicat(sfs_eval(input->cadr->this.pair.car,env_courant),env_courant))
 					{
 						
 						input = input->cadddr;
@@ -161,12 +237,12 @@ object sfs_eval( object input ) {
 					WARNING_MSG("Pas de conséquence");
 					return input;
 				}
-				if (predicat(input->cadr)){
+				if (predicat(input->cadr,env_courant)){
 					input = input->caddr;
 					goto eval;
 				}
 
-				else if (!predicat(input->cadr)){
+				else if (!predicat(input->cadr,env_courant)){
 					if(input->cdddr->type==SFS_NIL){
 						WARNING_MSG("Pas d'alternative");
 						return input;
@@ -180,14 +256,14 @@ object sfs_eval( object input ) {
 			if(!strcmp(input->this.pair.car->this.symbol,"define"))
 			{
 				object p=creer_env();
-				p=recherche_env(env_courant,input->cadr->this.symbol);
+				p=recherche(env_courant,input->cadr->this.symbol);
 				
 
 				if(p==NULL)
 				{
 					if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.cdr->type==SFS_NIL)
 					{
-					ajout_queue_var(env_courant,input->cadr->this.pair.car,sfs_eval(input->caddr));
+					ajout_queue_var(env_courant,input->cadr->this.pair.car,sfs_eval(input->caddr,env_courant));
 					return env_courant;
 					}
 
@@ -206,7 +282,7 @@ object sfs_eval( object input ) {
 					}
 					else
 					{
-					ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr));
+					ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr,env_courant));
 					return env_courant;
 					}
 				}
@@ -218,11 +294,11 @@ object sfs_eval( object input ) {
 			if(!strcmp(input->this.pair.car->this.symbol,"set!"))
 			{
 				object p=creer_env();
-				p=recherche_env(env_courant,input->cadr->this.symbol);
+				p=recherche(env_courant,input->cadr->this.symbol);
 				if(p==NULL) WARNING_MSG("La variable n'est pas définie");
 				else 
 				{
-					p->this.pair.cdr=sfs_eval(input->caddr);
+					p->this.pair.cdr=sfs_eval(input->caddr,env_courant);
 					return env_courant;
 				}
 				return env_courant;
@@ -236,8 +312,8 @@ object sfs_eval( object input ) {
     return input;
 }
 
-BOOL predicat(object input){
-	input=sfs_eval(input);
+BOOL predicat(object input, object env_courant){
+	input=sfs_eval(input,env_courant);
 	if (input->type==SFS_BOOLEAN && input->this.boolean==0) return 0;
 	else return 1;
 }

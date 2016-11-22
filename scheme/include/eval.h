@@ -18,8 +18,8 @@ extern "C" {
 
 #include "object.h"
 
-object sfs_eval( object );
-BOOL predicat(object input);
+object sfs_eval( object input, object env_courant );
+BOOL predicat(object input, object env_courant);
 
 #ifdef __cplusplus
 }

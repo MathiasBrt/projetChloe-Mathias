@@ -2,10 +2,11 @@
 #include "eval.h"
 #include "environnement.h"
 #include "basic.h"
+#include "print.h"
 
 extern object toplevel;
 
-object add(object input)
+object add(object input, object env_courant)
 			{
 				object p=creer_env();
 				object resultat=make_object(SFS_NUMBER);
@@ -14,14 +15,14 @@ object add(object input)
 				{
 					input=input->this.pair.cdr;
 					if(input->this.pair.car->type==SFS_PAIR){
-						input->this.pair.car=sfs_eval(input->this.pair.car);
+						input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer+=input->this.pair.car->this.number.this.integer;
 					}
 					else if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer+=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -31,7 +32,7 @@ object add(object input)
 return resultat;
 }
 
-object mult(object input)
+object mult(object input, object env_courant)
 {				
 				object p=creer_env();
 				object resultat=make_object(SFS_NUMBER);
@@ -40,16 +41,19 @@ object mult(object input)
 				{
 					input=input->this.pair.cdr;
 					if(input->this.pair.car->type==SFS_PAIR){
-						input->this.pair.car=sfs_eval(input->this.pair.car);
+						input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer*=input->this.pair.car->this.number.this.integer;
 					}
 					if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						p=recherche(env_courant,input->this.pair.car->this.symbol); printf("Je ne suis plus là\n");
+						sfs_print_atom(env_courant);
+						if (p==NULL) WARNING_MSG("La variable n'existe pas");
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer*=p->this.pair.cdr->this.number.this.integer;
+							printf("Après mult, coucou\n");
 						}
 						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
 					}
@@ -58,7 +62,7 @@ object mult(object input)
 
 }
 
-object divi(object input)
+object divi(object input, object env_courant)
 {
 				object p=creer_env();
 				
@@ -67,7 +71,7 @@ object divi(object input)
 				if(input->this.pair.cdr->type!=SFS_NIL)
 				{
 					if(input->cadr->type==SFS_PAIR){
-						input->cadr=sfs_eval(input->cadr);
+						input->cadr=sfs_eval(input->cadr,env_courant);
 					}
 					if(input->cadr->type==SFS_NUMBER && input->cadr->this.number.this.integer !=0){
 						resultat->this.number.this.integer=input->cadr->this.number.this.integer;
@@ -79,7 +83,7 @@ object divi(object input)
 
 					}
 					if(input->cadr->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->cadr->this.symbol);
+						p=recherche(env_courant,input->cadr->this.symbol);
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -91,14 +95,14 @@ object divi(object input)
 				{
 					input=input->this.pair.cdr;
 					if(input->this.pair.car->type==SFS_PAIR){
-						input->this.pair.car=sfs_eval(input->this.pair.car);
+						input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer/=input->this.pair.car->this.number.this.integer;
 					}
 					if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer/=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -107,7 +111,7 @@ object divi(object input)
 				}return resultat;
 }
 
-object sous(object input)
+object sous(object input, object env_courant)
 			{
 				object p=creer_env();
 				object resultat=make_object(SFS_NUMBER);
@@ -115,14 +119,14 @@ object sous(object input)
 				if(input->this.pair.cdr->type!=SFS_NIL)
 				{
 					if(input->cadr->type==SFS_PAIR){
-						input->cadr=sfs_eval(input->cadr);
+						input->cadr=sfs_eval(input->cadr,env_courant);
 					}
 					if(input->cadr->type==SFS_NUMBER){
 						resultat->this.number.this.integer=input->cadr->this.number.this.integer;
 						input=input->this.pair.cdr;
 					}
 					if(input->cadr->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->cadr->this.symbol);
+						p=recherche(env_courant,input->cadr->this.symbol);
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -134,14 +138,14 @@ object sous(object input)
 				{
 					input=input->this.pair.cdr;
 					if(input->this.pair.car->type==SFS_PAIR){
-						input->this.pair.car=sfs_eval(input->this.pair.car);
+						input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 					}
 					if(input->this.pair.car->type==SFS_NUMBER)
 					{
 						resultat->this.number.this.integer-=input->this.pair.car->this.number.this.integer;
 					}
 					if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer-=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -149,7 +153,8 @@ object sous(object input)
 					}
 				}return resultat;
 			}
-object egal(object input)
+
+object egal(object input, object env_courant)
 
 {
 				object p=creer_env();
@@ -162,10 +167,10 @@ object egal(object input)
 				if(input->this.pair.cdr->type!=SFS_NIL){
 					input=input->this.pair.cdr;
 					if(input->this.pair.car->type==SFS_PAIR){
-						input->this.pair.car=sfs_eval(input->this.pair.car);
+						input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 					}
 					if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
 						if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 							operande1->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -188,10 +193,10 @@ object egal(object input)
 					if(input->this.pair.cdr->type!=SFS_NIL){
 						input=input->this.pair.cdr;
 						if(input->this.pair.car->type==SFS_PAIR){
-							input->this.pair.car=sfs_eval(input->this.pair.car);
+							input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 						}
 						if(input->this.pair.car->type==SFS_SYMBOL){
-							p=recherche(toplevel,input->this.pair.car->this.symbol);
+							p=recherche(env_courant,input->this.pair.car->this.symbol);
 							if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 								operande2->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 							}
@@ -214,7 +219,7 @@ object egal(object input)
 				return resultat;
 }
 
-object inf(object input)
+object inf(object input, object env_courant)
 
 {
 				object p=creer_env();
@@ -227,10 +232,10 @@ object inf(object input)
 				if(input->this.pair.cdr->type!=SFS_NIL){
 					input=input->this.pair.cdr;
 					if(input->this.pair.car->type==SFS_PAIR){
-						input->this.pair.car=sfs_eval(input->this.pair.car);
+						input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 					}
 					if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
 						if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 							operande1->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -253,10 +258,10 @@ object inf(object input)
 					if(input->this.pair.cdr->type!=SFS_NIL){
 						input=input->this.pair.cdr;
 						if(input->this.pair.car->type==SFS_PAIR){
-							input->this.pair.car=sfs_eval(input->this.pair.car);
+							input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 						}
 						if(input->this.pair.car->type==SFS_SYMBOL){
-							p=recherche(toplevel,input->this.pair.car->this.symbol);
+							p=recherche(env_courant,input->this.pair.car->this.symbol);
 							if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 								operande2->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 							}
@@ -279,7 +284,7 @@ object inf(object input)
 				return resultat;
 }
 
-object sup(object input)
+object sup(object input, object env_courant)
 
 {
 				object p=creer_env();
@@ -292,10 +297,10 @@ object sup(object input)
 				if(input->this.pair.cdr->type!=SFS_NIL){
 					input=input->this.pair.cdr;
 					if(input->this.pair.car->type==SFS_PAIR){
-						input->this.pair.car=sfs_eval(input->this.pair.car);
+						input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 					}
 					if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(toplevel,input->this.pair.car->this.symbol);
+						p=recherche(env_courant,input->this.pair.car->this.symbol);
 						if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 							operande1->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
@@ -319,10 +324,10 @@ object sup(object input)
 					if(input->this.pair.cdr->type!=SFS_NIL){
 						input=input->this.pair.cdr;
 						if(input->this.pair.car->type==SFS_PAIR){
-							input->this.pair.car=sfs_eval(input->this.pair.car);
+							input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 						}
 						if(input->this.pair.car->type==SFS_SYMBOL){
-							p=recherche(toplevel,input->this.pair.car->this.symbol);
+							p=recherche(env_courant,input->this.pair.car->this.symbol);
 							if(p!=NULL && p->this.pair.cdr->type==SFS_NUMBER){
 								operande2->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 							}
@@ -345,12 +350,12 @@ object sup(object input)
 				return resultat;
 }
 
-object est_null(object input){
+object est_null(object input, object env_courant){
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL){
 		if(input->this.pair.cdr->type!=SFS_NIL){
-		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 		    resultat->this.boolean= (input->cadr->type==SFS_NIL) ? TRUE:FALSE;
 		}
 		input=input->this.pair.cdr;
@@ -358,13 +363,13 @@ object est_null(object input){
 	return resultat;
 }
 
-object est_boolean(object input){
+object est_boolean(object input, object env_courant){
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL)
 	{
 		if(input->this.pair.cdr->type!=SFS_NIL){
-		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 		    resultat->this.boolean= (input->cadr->type==SFS_BOOLEAN) ? TRUE:FALSE;
 		}
 		input=input->this.pair.cdr;
@@ -372,26 +377,26 @@ object est_boolean(object input){
 	return resultat;
 }
 
-object est_symbol(object input){
+object est_symbol(object input, object env_courant){
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(resultat->this.boolean && input->this.pair.cdr->type!=SFS_NIL)
 	{
 		if(input->this.pair.cdr->type!=SFS_NIL){
-		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+		    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 		    resultat->this.boolean= (input->cadr->type==SFS_SYMBOL) ? TRUE:FALSE;
 		}input=input->this.pair.cdr;
 	}
 	return resultat;
 }
 
-object est_pair(object input)
+object est_pair(object input, object env_courant)
 {
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
-	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 		if (input->cadr->type==SFS_PAIR)
 		{
 			resultat->this.boolean=TRUE;
@@ -407,13 +412,13 @@ object est_pair(object input)
 
 }
 
-object est_string(object input)
+object est_string(object input, object env_courant)
 {
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
-	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 		if (input->cadr->type==SFS_STRING)
 		{
 			resultat->this.boolean=TRUE;
@@ -431,13 +436,13 @@ object est_string(object input)
 
 }
 
-object est_character(object input)
+object est_character(object input, object env_courant)
 {
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
-	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 		if (input->cadr->type==SFS_CHARACTER)
 		{
 			resultat->this.boolean=TRUE;
@@ -452,13 +457,13 @@ object est_character(object input)
 	}return resultat;
 }
 
-object est_integer(object input)
+object est_integer(object input, object env_courant)
 {
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
-	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 		if (input->cadr->type==SFS_NUMBER)
 		{
 			resultat->this.boolean=TRUE;
@@ -474,15 +479,15 @@ object est_integer(object input)
 
 }
 
-object est_primitive(object input)
+object est_primitive(object input, object env_courant)
 {
 	object p=creer_env();
 	object resultat=make_object(SFS_BOOLEAN);
 	resultat->this.boolean=TRUE;
 	while(input->this.pair.cdr->type!=SFS_NIL)
 	{
-	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
-		p=recherche(toplevel,input->cadr->this.symbol);
+	    if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr, env_courant);
+		p=recherche(env_courant,input->cadr->this.symbol);
 
 		if (p->this.pair.cdr->type==SFS_PRIMITIVE)
 		{
@@ -499,9 +504,9 @@ object est_primitive(object input)
 	
 }
 
-object conv_char_to_integer(object input){
+object conv_char_to_integer(object input, object env_courant){
 	object resultat=make_object(SFS_NUMBER);
-	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 	if(input->cadr->type==SFS_CHARACTER){
 		resultat->this.number.this.integer=(int)input->cadr->this.character;
 		return resultat;
@@ -510,9 +515,9 @@ object conv_char_to_integer(object input){
 	return input;
 }
 
-object conv_integer_to_char(object input){
+object conv_integer_to_char(object input, object env_courant){
 	object resultat=make_object(SFS_CHARACTER);
-	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 	if(input->cadr->type==SFS_NUMBER){
 		resultat->this.character=input->cadr->this.number.this.integer;
 		return resultat;
@@ -521,9 +526,9 @@ object conv_integer_to_char(object input){
 	return input;
 }
 
-object conv_number_to_string(object input){
+object conv_number_to_string(object input, object env_courant){
 	object result=make_object(SFS_STRING);
-	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
+	if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
 	if(input->cadr->type==SFS_NUMBER){
 		sprintf(result->this.string,"%d",input->cadr->this.number.this.integer);
 		return result;
@@ -532,7 +537,7 @@ object conv_number_to_string(object input){
 	return input;
 }
 
-object conv_string_to_symbol(object input)
+object conv_string_to_symbol(object input, object env_courant)
 {	
 
 	object resultat=make_object(SFS_SYMBOL);
@@ -540,7 +545,7 @@ object conv_string_to_symbol(object input)
 
 	if(input->cadr->type==SFS_PAIR)
 	{
-		input->cadr=sfs_eval(input->cadr);
+		input->cadr=sfs_eval(input->cadr,env_courant);
 	}
 
 	if(input->cadr->type==SFS_STRING)
@@ -553,13 +558,13 @@ object conv_string_to_symbol(object input)
 	
 }
 
-object conv_symbol_to_string(object input)
+object conv_symbol_to_string(object input, object env_courant)
 {
 	object resultat=make_object(SFS_STRING);
 
 	if(input->cadr->type==SFS_PAIR)
 	{
-		input->cadr=sfs_eval(input->cadr);
+		input->cadr=sfs_eval(input->cadr,env_courant);
 	}
 
 	if(input->cadr->type==SFS_SYMBOL)
@@ -574,14 +579,14 @@ object conv_symbol_to_string(object input)
 	
 }
 
-object conv_string_to_number(object input)
+object conv_string_to_number(object input, object env_courant)
 {
 	object resultat=make_object(SFS_NUMBER);
 	int i=0;
 
 	if(input->cadr->type==SFS_PAIR)
 	{
-		input->cadr=sfs_eval(input->cadr);
+		input->cadr=sfs_eval(input->cadr,env_courant);
 	}
 
 	if(input->cadr->type==SFS_STRING)
@@ -597,10 +602,10 @@ return input;
 
 }
 
-object car(object input){
+object car(object input, object env_courant){
 	if (input->cadr->type==SFS_PAIR) 
 	{
-		input->cadr=sfs_eval(input->cadr);
+		input->cadr=sfs_eval(input->cadr,env_courant);
 		if(input->cadr->type==SFS_PAIR)return input->cadr->this.pair.car;
 	}
 	
@@ -608,10 +613,10 @@ object car(object input){
 	return input;
 }
 
-object cdr(object input){
+object cdr(object input, object env_courant){
 	if (input->cadr->type==SFS_PAIR)
 	{
-		input->cadr=sfs_eval(input->cadr);
+		input->cadr=sfs_eval(input->cadr,env_courant);
 		if(input->cadr->type==SFS_PAIR) return input->cadr->this.pair.cdr;
 	}
 	
@@ -619,18 +624,15 @@ object cdr(object input){
 	return input;
 }
 
-object set_car(object input)
+object set_car(object input, object env_courant)
 {
-	object env_courant=creer_env();
-	env_courant=toplevel;
-
 	if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.car->type==SFS_SYMBOL)
 	{
 		object p=creer_env();
 		p=recherche_env(env_courant,input->cadr->this.pair.car->this.symbol);
 		if(p!=NULL)
 		{
-			p->this.pair.cdr=sfs_eval(input->caddr);
+			p->this.pair.cdr=sfs_eval(input->caddr,env_courant);
 			return env_courant;
 
 		}
@@ -643,10 +645,8 @@ object set_car(object input)
 }
 
 
-object set_cdr(object input)
+object set_cdr(object input, object env_courant)
 {
-	object env_courant=creer_env();
-	env_courant=toplevel;
 
 	if(input->cadr->type==SFS_PAIR && input->cadr->cadr->type==SFS_SYMBOL)
 	{
@@ -654,7 +654,7 @@ object set_cdr(object input)
 		p=recherche_env(env_courant,input->cadr->cadr->this.symbol);
 		if(p!=NULL)
 		{
-			p->this.pair.cdr=sfs_eval(input->caddr);
+			p->this.pair.cdr=sfs_eval(input->caddr,env_courant);
 			return env_courant;
 
 		}
@@ -666,12 +666,12 @@ object set_cdr(object input)
 	return input;
 }
 
-object new_list(object input)
+object new_list(object input, object env_courant)
 {
 	object new_list=make_object(SFS_PAIR);
 	if(input->cadr->type==SFS_PAIR)
 	{
-		input->cadr=sfs_eval(input->cadr);
+		input->cadr=sfs_eval(input->cadr,env_courant);
 	}
 	else
 	{
@@ -682,17 +682,16 @@ object new_list(object input)
 }
 
 /* Test si deux object sont identiques*/
-object eq_poly(object input)
+object eq_poly(object input, object env_courant)
 {
 	object resultat=make_object(SFS_BOOLEAN);
-	object env_courant=creer_env();
-	env_courant=toplevel;
+	
 
 	while(input->cddr->type!=SFS_NIL)
 	{	
 		/* on remplace les éléments non auto évaluants (les pairs et les symbols) par leur valeur */
-		if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr);
-		if(input->caddr->type==SFS_PAIR) input->caddr=sfs_eval(input->caddr);
+		if(input->cadr->type==SFS_PAIR) input->cadr=sfs_eval(input->cadr,env_courant);
+		if(input->caddr->type==SFS_PAIR) input->caddr=sfs_eval(input->caddr,env_courant);
 		if(input->cadr->type==SFS_SYMBOL) input->cadr=association(env_courant,input->cadr);
 		if(input->caddr->type==SFS_SYMBOL) input->caddr=association(env_courant,input->caddr);
 		

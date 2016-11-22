@@ -66,6 +66,13 @@ object ajout_queue_env(object env){
 	return env;
 }
 
+object ajout_tete_env(object env)
+{
+	object nv_env=creer_env();
+	nv_env->env_suiv=env;
+	return nv_env;
+}
+
 object recherche_etiquette(object env, string etiquette){
 	object p=env;
 	while(!est_vide_env(p)){
@@ -97,6 +104,8 @@ object recherche(object env, string variable){
 	object p=env;
 	object result;
 	while(!est_vide_env(p)){
+
+		printf("Je suis là\n");
 		result=recherche_env(p,variable);
 		if(result!=NULL) return result;
 		p=p->env_suiv;
@@ -162,9 +171,16 @@ object init_top_level(void){
 	
 	strcpy(variable->this.symbol,"define"); donnee->this.number.this.integer=5;
 	env=ajout_queue_var(env,variable,donnee);
+
+	strcpy(variable->this.symbol,"lambda"); donnee->this.number.this.integer=10;
+	env=ajout_queue_var(env,variable,donnee);
 	
+	strcpy(variable->this.symbol,"begin"); donnee->this.number.this.integer=9;
+	env=ajout_queue_var(env,variable,donnee);
+
 	strcpy(variable->this.symbol,"set!"); donnee->this.number.this.integer=6;
 	env=ajout_queue_var(env,variable,donnee);
+
 	/* Implantation Primitives */
 	strcpy(forme->this.symbol,"+"); valeur->this.primitive=add;
 	env=ajout_queue_var(env,forme,valeur);

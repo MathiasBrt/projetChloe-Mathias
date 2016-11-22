@@ -458,12 +458,12 @@ object sfs_read_atom( char *input, uint *here ) {
         	}
             num nombre;
             nombre.this.integer=atoi(buffer);
-            if((nombre.this.integer==-1 || nombre.this.integer==0) && buffer_counter>2){
+            /*if((nombre.this.integer==-1 || nombre.this.integer==0) && buffer_counter>2){
             	atom = make_object(SFS_NUMBER);
             	atom->this.number=nombre;
             	atom->this.number.numtype= (nombre.this.integer==0) ? NUM_MINFTY:NUM_PINFTY;
             	return atom;
-            }
+            }*/
             atom = make_object( SFS_NUMBER ) ; 
             atom->this.number=nombre;
             return atom;

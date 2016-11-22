@@ -31,9 +31,9 @@ void sfs_print_atom( object o ) {
             else printf("#\\%c",o->this.character); break;
         case SFS_NUMBER:
             /*printf("nombre: ");*/
-            if (o->this.number.numtype==NUM_MINFTY) printf("-inf");
-            else if (o->this.number.numtype==NUM_PINFTY) printf("+inf");
-            else printf("%d",o->this.number.this.integer); break;
+          /*  if (o->this.number.numtype==NUM_MINFTY) printf("-inf");
+            else if (o->this.number.numtype==NUM_PINFTY) printf("+inf");*/
+            /*else*/ printf("%d",o->this.number.this.integer); break;
         case SFS_SYMBOL:
             /*printf("symbole: ");*/
             printf("%s",o->this.symbol); break;
@@ -48,7 +48,10 @@ void sfs_print_atom( object o ) {
 
         case SFS_PRIMITIVE:
              break;
-            
+        case SFS_COMPOUND:
+            printf("parms : "); sfs_print(o->this.compound.parms);
+            printf("body : "); sfs_print(o->this.compound.body);
+            break;
     }
     return;
 }
