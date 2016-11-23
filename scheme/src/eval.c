@@ -39,17 +39,28 @@ object sfs_eval( object input, object env_courant ) {
 
 			if(input->this.pair.car->type==SFS_COMPOUND)
 			{
+				printf("Bonjour, tu es dans le if\n");
 				env_courant=ajout_tete_env(env_courant);
-				sfs_print_atom(input->this.pair.car);
+				object p=input->this.pair.car->this.compound.parms;
+				object q=input->this.pair.cdr;
 
-				env_courant=ajout_queue_var(env_courant,input->this.pair.car->this.compound.parms->this.pair.car, input->cadr);
-				sfs_print_atom(env_courant);
+				do
+				{
+				printf("Bonjour, tu es dans le while\n");
+				env_courant=ajout_queue_var(env_courant,p->this.pair.car,q->this.pair.car);
+				printf("Bonjour, tu es après ajout queue\n");
+				p=p->this.pair.cdr; printf("après le cdr\n");
+				q=q->this.pair.cdr;
 				printf("Bonjour");
 
+				}while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
+
+				sfs_print_atom (env_courant);
+
 				object resultat = sfs_eval(input->this.pair.car->this.compound.body,env_courant);
-				printf("Bonjour 2.0");
+				
 				env_courant=env_courant->env_suiv;
-				sfs_print_atom(resultat);
+			
 
 				return resultat;
 			}

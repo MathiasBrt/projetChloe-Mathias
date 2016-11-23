@@ -104,8 +104,6 @@ object recherche(object env, string variable){
 	object p=env;
 	object result;
 	while(!est_vide_env(p)){
-
-		printf("Je suis là\n");
 		result=recherche_env(p,variable);
 		if(result!=NULL) return result;
 		p=p->env_suiv;

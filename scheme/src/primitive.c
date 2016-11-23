@@ -48,12 +48,12 @@ object mult(object input, object env_courant)
 						resultat->this.number.this.integer*=input->this.pair.car->this.number.this.integer;
 					}
 					if(input->this.pair.car->type==SFS_SYMBOL){
-						p=recherche(env_courant,input->this.pair.car->this.symbol); printf("Je ne suis plus là\n");
-						sfs_print_atom(env_courant);
+						p=recherche(env_courant,input->this.pair.car->this.symbol); 
+						
 						if (p==NULL) WARNING_MSG("La variable n'existe pas");
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer*=p->this.pair.cdr->this.number.this.integer;
-							printf("Après mult, coucou\n");
+							
 						}
 						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
 					}
