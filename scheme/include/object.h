@@ -76,8 +76,12 @@ object make_nil( void );
 #define cdar this.pair.car->this.pair.cdr
 #define cddr this.pair.cdr->this.pair.cdr
 #define caddr cddr->this.pair.car
+#define caadr cadr->this.pair.car
+#define cdadr cadr->this.pair.cdr
 #define cdddr cddr->this.pair.cdr
 #define cadddr cdddr->this.pair.car
+#define cadadr cadr->cadr
+#define cddadr cadr->cddr
 #define cddddr cdddr->this.pair.cdr
 
 

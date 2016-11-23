@@ -24,12 +24,6 @@ object sfs_eval( object input, object env_courant ) {
 
 	eval:
 	
-	 /*Renvoie la valeur de la variable, si elle existe*/
-	if(input->type==SFS_SYMBOL){
-		p=recherche(env_courant,input->this.symbol);
-		if (p==NULL) return input;
-		return p->this.pair.cdr;
-	}
 	/*Dans le cas s'une paire*/
 	if(input->type==SFS_PAIR){
 			if(input->this.pair.car->type==SFS_PAIR)
@@ -39,26 +33,25 @@ object sfs_eval( object input, object env_courant ) {
 
 			if(input->this.pair.car->type==SFS_COMPOUND)
 			{
-				printf("Bonjour, tu es dans le if\n");
+				/*printf("Bonjour, tu es dans le if\n");*/
 				env_courant=ajout_tete_env(env_courant);
 				object p=input->this.pair.car->this.compound.parms;
 				object q=input->this.pair.cdr;
 
 				do
 				{
-				printf("Bonjour, tu es dans le while\n");
-				env_courant=ajout_queue_var(env_courant,p->this.pair.car,q->this.pair.car);
-				printf("Bonjour, tu es après ajout queue\n");
-				p=p->this.pair.cdr; printf("après le cdr\n");
+				/*printf("Bonjour, tu es dans le while\n");*/
+				env_courant=ajout_queue_var(env_courant,p->this.pair.car,sfs_eval(q->this.pair.car,env_courant));
+				/*printf("Bonjour, tu es après ajout queue\n");*/
+				p=p->this.pair.cdr; /*printf("après le cdr\n");*/
 				q=q->this.pair.cdr;
-				printf("Bonjour");
+				/*printf("Bonjour");*/
 
 				}while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
 
 				sfs_print_atom (env_courant);
 
 				object resultat = sfs_eval(input->this.pair.car->this.compound.body,env_courant);
-				
 				env_courant=env_courant->env_suiv;
 			
 
@@ -73,13 +66,18 @@ object sfs_eval( object input, object env_courant ) {
 
 				if(p==NULL) return input; /*Renvoie l'entrée si le symbol n'existe pas*/
 
-				/* Test si le cdr est une primitive */
+				/* Teste si le cdr est une primitive */
 				if(p->this.pair.cdr->type==SFS_PRIMITIVE)
 				{
 
 					object (*prim)(object,object); /* Pointeur de fonction */
 					prim = p->this.pair.cdr->this.primitive; /* Association de la fonction */
 					return prim(input, env_courant);
+				}
+				/* Teste si le cdr est un agregat */
+				if(p->this.pair.cdr->type==SFS_COMPOUND){
+					input->this.pair.car=association(env_courant,input->this.pair.car);
+					goto eval;
 				}
 
 				/* Test de la gestion de casse => Forme écrite obligatoirement en minuscule */
@@ -142,7 +140,7 @@ object sfs_eval( object input, object env_courant ) {
 				if(input->this.pair.cdr->type==SFS_PAIR)
 
 				{
-					agregat->this.compound.body=input->this.pair.cdr;
+					agregat->this.compound.body=input->cadr;
 				}
 
 				else
@@ -267,45 +265,71 @@ object sfs_eval( object input, object env_courant ) {
 			if(!strcmp(input->this.pair.car->this.symbol,"define"))
 			{
 				object p=creer_env();
-				p=recherche(env_courant,input->cadr->this.symbol);
-				
-
-				if(p==NULL)
-				{
-					if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.cdr->type==SFS_NIL)
-					{
-					ajout_queue_var(env_courant,input->cadr->this.pair.car,sfs_eval(input->caddr,env_courant));
-					return env_courant;
+				if(input->this.pair.cdr->type!=SFS_NIL){
+					if(input->cadr->type==SFS_SYMBOL){
+						p=recherche_env(env_courant,input->cadr->this.symbol);
+						if(p==NULL)
+						{
+							if(input->caddr->type==SFS_NIL)
+							{
+								WARNING_MSG("La variable ne peut pas prendre la valeur ()");
+								return input;
+							}
+							else
+							{
+								ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr,env_courant));
+								return env_courant;
+							}
+						}
+						else {
+							WARNING_MSG("Pour changer la valeur de la variable, utilisez set!");
+							return input;
+						}
 					}
-
-					if(input->cadr->type==SFS_PAIR && input->cadr->this.pair.cdr->type!=SFS_NIL)
-					{
-						WARNING_MSG("Trop d'arguments, indéfinissable");
+					else if(input->cadr->type==SFS_PAIR){
+						if(input->caadr->type==SFS_SYMBOL){
+							/* Vérifications syntaxiques */
+							if(input->cdadr->type!=SFS_PAIR){
+								WARNING_MSG("Déclaration implicite de fonction sans paramètres");
+								return input;
+							}
+							if(input->cddr->type!=SFS_PAIR){
+								WARNING_MSG("Déclaration implicite de fonction sans corps");
+								return input;
+							}
+							/* On va transformer l'arbre pour faire apparaitre une structure analogue à lambda */
+							p=recherche_env(env_courant,input->caadr->this.symbol);
+							if(p==NULL){
+								object nom_fonction=make_object(SFS_SYMBOL);
+								strcpy(nom_fonction->this.symbol,input->caadr->this.symbol);
+								strcpy(input->caadr->this.symbol,"lambda");
+								input->cadadr=input->cdadr;
+								input->cddadr=input->cddr;
+								ajout_queue_var(env_courant,nom_fonction,sfs_eval(input->cadr,env_courant));
+								return env_courant;
+							}
+							else{
+								WARNING_MSG("Pour changer la valeur de la variable, utilisez set!");
+								return input;
+							}
+						}
+						else{
+							WARNING_MSG("Argument de define invalide");
+							return input;
+						}
+					}
+					else{
+						WARNING_MSG("Argument de define invalide");
 						return input;
-
-					}
-
-					if(input->caddr->type==SFS_NIL)
-					{
-						WARNING_MSG("La variable ne peut pas prendre la valeur ()");
-						return input;
-
-					}
-					else
-					{
-					ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr,env_courant));
-					return env_courant;
 					}
 				}
-				else WARNING_MSG("Pour changer la valeur de la variable, utilisez set!");
-
 			}
 
 			/* forme set! */
 			if(!strcmp(input->this.pair.car->this.symbol,"set!"))
 			{
 				object p=creer_env();
-				p=recherche(env_courant,input->cadr->this.symbol);
+				p=recherche_env(env_courant,input->cadr->this.symbol); /*idem : une var peut être dans 2 env*/
 				if(p==NULL) WARNING_MSG("La variable n'est pas définie");
 				else 
 				{
@@ -319,6 +343,12 @@ object sfs_eval( object input, object env_courant ) {
 		
 		return input;
 		}
+	}
+	/*Renvoie la valeur de la variable, si elle existe*/
+	if(input->type==SFS_SYMBOL){
+		p=recherche(env_courant,input->this.symbol);
+		if (p==NULL) return input;
+		return p->this.pair.cdr;
 	}
     return input;
 }

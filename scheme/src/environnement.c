@@ -50,6 +50,11 @@ object association(object env, object variable){
 		case 0x05: resultat->this.boolean=p->this.pair.cdr->this.boolean; break;
 		case 0x06: strcpy(resultat->this.symbol,p->this.pair.cdr->this.symbol); break;
 		case 0x08: resultat->this.primitive=p->this.pair.cdr->this.primitive; break;
+		case 0x09: 
+			resultat->this.compound.parms=p->this.pair.cdr->this.compound.parms;
+			resultat->this.compound.body=p->this.pair.cdr->this.compound.body;
+			resultat->this.compound.env=p->this.pair.cdr->this.compound.env;
+			break;
 		case 0x04: resultat=NULL;
 	}
 	return resultat;
@@ -126,6 +131,11 @@ object ajout_queue_var(object env, object variable, object valeur){
 		case 0x05: nv_var->this.pair.cdr->this.boolean=valeur->this.boolean; break;
 		case 0x06: strcpy(nv_var->this.pair.cdr->this.symbol,valeur->this.symbol); break;
 		case 0x08: nv_var->this.pair.cdr->this.primitive=valeur->this.primitive; break;
+		case 0x09: 
+			nv_var->this.pair.cdr->this.compound.parms=valeur->this.compound.parms;
+			nv_var->this.pair.cdr->this.compound.body=valeur->this.compound.body;
+			nv_var->this.pair.cdr->this.compound.env=valeur->this.compound.env;
+			break;
 		case 0x04: nv_var->this.pair.cdr=NULL;
 	}
 	object p=creer_env();

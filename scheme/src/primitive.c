@@ -26,7 +26,10 @@ object add(object input, object env_courant)
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer+=p->this.pair.cdr->this.number.this.integer;
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+							WARNING_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							return nil;
+						}
 					}
 				}
 return resultat;
@@ -55,7 +58,10 @@ object mult(object input, object env_courant)
 							resultat->this.number.this.integer*=p->this.pair.cdr->this.number.this.integer;
 							
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+							WARNING_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							return nil;
+						}
 					}
 				}return resultat;
 			
@@ -87,7 +93,10 @@ object divi(object input, object env_courant)
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+							WARNING_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							return nil;
+						}
 						input=input->this.pair.cdr;
 					}
 				}
@@ -106,7 +115,10 @@ object divi(object input, object env_courant)
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer/=p->this.pair.cdr->this.number.this.integer;
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+							WARNING_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							return nil;
+						}
 					}
 				}return resultat;
 }
@@ -130,7 +142,10 @@ object sous(object input, object env_courant)
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer=p->this.pair.cdr->this.number.this.integer;
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+							WARNING_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							return nil;
+						}
 						input=input->this.pair.cdr;
 					}
 				}
@@ -149,7 +164,10 @@ object sous(object input, object env_courant)
 						if(p->this.pair.cdr->type==SFS_NUMBER){
 							resultat->this.number.this.integer-=p->this.pair.cdr->this.number.this.integer;
 						}
-						else ERROR_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+						else {
+							WARNING_MSG("%s ne peut être un opérande !",p->this.pair.car->this.symbol);
+							return nil;
+						}
 					}
 				}return resultat;
 			}
