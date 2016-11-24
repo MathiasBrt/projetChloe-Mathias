@@ -300,13 +300,16 @@ object sfs_eval( object input, object env_courant ) {
 							/* On va transformer l'arbre pour faire apparaitre une structure analogue à lambda */
 							p=recherche_env(env_courant,input->caadr->this.symbol);
 							if(p==NULL){
-								object nom_fonction=make_object(SFS_SYMBOL);
-								strcpy(nom_fonction->this.symbol,input->caadr->this.symbol);
-								strcpy(input->caadr->this.symbol,"lambda");
-								input->cadadr=input->cdadr;
-								input->cddadr=input->cddr;
-								ajout_queue_var(env_courant,nom_fonction,sfs_eval(input->cadr,env_courant));
+								object cons_lambda = make_object(SFS_PAIR);
+								cons_lambda->this.pair.car=make_object(SFS_SYMBOL);
+								strcpy(cons_lambda->this.pair.car->this.symbol,"lambda");
+								cons_lambda->this.pair.cdr=make_object(SFS_PAIR);
+								cons_lambda->cddr=make_object(SFS_PAIR);
+								cons_lambda->cadr=input->cdadr;
+								cons_lambda->caddr=input->caddr;
+								ajout_queue_var(env_courant,input->caadr,sfs_eval(cons_lambda,env_courant));
 								return env_courant;
+								
 							}
 							else{
 								WARNING_MSG("Pour changer la valeur de la variable, utilisez set!");
