@@ -71,12 +71,12 @@ object sfs_eval( object input, object env_courant ) {
 				}
 
 				/* Test de la gestion de casse => Forme écrite obligatoirement en minuscule */
-				/*if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
+				if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
 				{
 					WARNING_MSG("La forme est certainement en majuscule !");
 					return input;
 
-				}*/
+				}
 
 				/* Forme quote, elle n'évalue paas la l'expression, elle renvoie les arguments  */
 
@@ -109,7 +109,6 @@ object sfs_eval( object input, object env_courant ) {
 			
 			/* forme let */
 			if(strcmp(input->this.pair.car->this.symbol,"let")==0){
-			getchar();
 			
 				if(input->this.pair.cdr->type==SFS_NIL)
 				{
@@ -133,7 +132,7 @@ object sfs_eval( object input, object env_courant ) {
 				object circulation = input->this.pair.car;
 				
 				
-				while(circulation->this.pair.cdr->type!=SFS_NIL)
+				while(circulation->type!=SFS_NIL)
 				
 				{
 					strcpy(cons_var->this.pair.car->this.symbol,"define");
@@ -141,9 +140,8 @@ object sfs_eval( object input, object env_courant ) {
 					sfs_eval(cons_var,env_courant);
 					circulation=circulation->this.pair.cdr;
 				}
-				
-				
-				
+
+				input->this.pair.car->type=SFS_SYMBOL;
 				strcpy(input->this.pair.car->this.symbol,"begin");
 				circulation = sfs_eval(input,env_courant);
 				env_courant=env_courant->env_suiv;
