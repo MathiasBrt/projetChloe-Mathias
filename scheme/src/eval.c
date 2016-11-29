@@ -18,12 +18,10 @@ object toplevel;
 object sfs_eval( object input, object env_courant ) {
 
 	
-	
 	object p=creer_env();
 	
 
 	eval:
-	
 	/*Dans le cas s'une paire*/
 	if(input->type==SFS_PAIR){
 			if(input->this.pair.car->type==SFS_PAIR)
@@ -33,23 +31,16 @@ object sfs_eval( object input, object env_courant ) {
 
 			if(input->this.pair.car->type==SFS_COMPOUND)
 			{
-				/*printf("Bonjour, tu es dans le if\n");*/
 				env_courant=ajout_tete_env(env_courant);
 				object p=input->this.pair.car->this.compound.parms;
 				object q=input->this.pair.cdr;
 
 				do
 				{
-				/*printf("Bonjour, tu es dans le while\n");*/
 				env_courant=ajout_queue_var(env_courant,p->this.pair.car,sfs_eval(q->this.pair.car,env_courant));
-				/*printf("Bonjour, tu es après ajout queue\n");*/
-				p=p->this.pair.cdr; /*printf("après le cdr\n");*/
+				p=p->this.pair.cdr;
 				q=q->this.pair.cdr;
-				/*printf("Bonjour");*/
-
 				}while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
-
-				sfs_print_atom (env_courant);
 
 				object resultat = sfs_eval(input->this.pair.car->this.compound.body,env_courant);
 				env_courant=env_courant->env_suiv;
@@ -63,13 +54,12 @@ object sfs_eval( object input, object env_courant ) {
 			{
 				/*Recherche dans l'environnement courant*/
 				p=recherche(env_courant,input->this.pair.car->this.symbol);
-
+				
 				if(p==NULL) return input; /*Renvoie l'entrée si le symbol n'existe pas*/
 
 				/* Teste si le cdr est une primitive */
 				if(p->this.pair.cdr->type==SFS_PRIMITIVE)
 				{
-
 					object (*prim)(object,object); /* Pointeur de fonction */
 					prim = p->this.pair.cdr->this.primitive; /* Association de la fonction */
 					return prim(input, env_courant);
@@ -81,14 +71,15 @@ object sfs_eval( object input, object env_courant ) {
 				}
 
 				/* Test de la gestion de casse => Forme écrite obligatoirement en minuscule */
-				if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
+				/*if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
 				{
 					WARNING_MSG("La forme est certainement en majuscule !");
 					return input;
 
-				}
+				}*/
 
 				/* Forme quote, elle n'évalue paas la l'expression, elle renvoie les arguments  */
+
 				if (strcmp(input->this.pair.car->this.symbol,"quote")==0)
 				{
 					if (input->this.pair.cdr->type != SFS_NIL)
@@ -114,6 +105,50 @@ object sfs_eval( object input, object env_courant ) {
 
 					
 				} return resultat;
+			}
+			
+			/* forme let */
+			if(strcmp(input->this.pair.car->this.symbol,"let")==0){
+			getchar();
+			
+				if(input->this.pair.cdr->type==SFS_NIL)
+				{
+					WARNING_MSG("Erreur de syntaxe du let");
+					return input;
+				}
+				
+				input=input->this.pair.cdr;
+				env_courant=ajout_tete_env(env_courant);
+				object cons_var = make_object(SFS_PAIR);
+				cons_var->this.pair.car=make_object(SFS_SYMBOL);
+				cons_var->this.pair.cdr=make_object(SFS_PAIR);
+				
+				
+				if(input->this.pair.car->type!=SFS_PAIR)
+				{
+					WARNING_MSG("Erreur de syntaxe du let");
+					return input;
+				}
+				
+				object circulation = input->this.pair.car;
+				
+				
+				while(circulation->this.pair.cdr->type!=SFS_NIL)
+				
+				{
+					strcpy(cons_var->this.pair.car->this.symbol,"define");
+					cons_var->this.pair.cdr=circulation->this.pair.car;
+					sfs_eval(cons_var,env_courant);
+					circulation=circulation->this.pair.cdr;
+				}
+				
+				
+				
+				strcpy(input->this.pair.car->this.symbol,"begin");
+				circulation = sfs_eval(input,env_courant);
+				env_courant=env_courant->env_suiv;
+				
+				return circulation; 
 			}
 
 
@@ -277,8 +312,9 @@ object sfs_eval( object input, object env_courant ) {
 							}
 							else
 							{
-								ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr,env_courant));
-								return env_courant;
+								env_courant=ajout_queue_var(env_courant,input->cadr,sfs_eval(input->caddr,env_courant));
+								return sfs_eval(input->cadr,env_courant);
+								
 							}
 						}
 						else {
@@ -308,7 +344,8 @@ object sfs_eval( object input, object env_courant ) {
 								cons_lambda->cadr=input->cdadr;
 								cons_lambda->caddr=input->caddr;
 								ajout_queue_var(env_courant,input->caadr,sfs_eval(cons_lambda,env_courant));
-								return env_courant;
+								input=input->caadr;
+								goto eval;
 								
 							}
 							else{

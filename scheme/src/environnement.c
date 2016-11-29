@@ -179,7 +179,11 @@ object init_top_level(void){
 	
 	strcpy(variable->this.symbol,"define"); donnee->this.number.this.integer=5;
 	env=ajout_queue_var(env,variable,donnee);
+	
+	strcpy(variable->this.symbol,"let"); donnee->this.number.this.integer=2;
+	env=ajout_queue_var(env,variable,donnee);
 
+	
 	strcpy(variable->this.symbol,"lambda"); donnee->this.number.this.integer=10;
 	env=ajout_queue_var(env,variable,donnee);
 	
