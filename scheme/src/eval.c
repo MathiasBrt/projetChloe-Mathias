@@ -130,17 +130,45 @@ object sfs_eval( object input, object env_courant ) {
 				}
 				
 				object circulation = input->this.pair.car;
-				
+		
 				
 				while(circulation->type!=SFS_NIL)
 				
 				{
 					strcpy(cons_var->this.pair.car->this.symbol,"define");
+					
+					if(circulation->this.pair.car->this.pair.cdr->this.pair.car->type!=SFS_NUMBER && circulation->this.pair.car->this.pair.cdr->this.pair.car->type!=SFS_SYMBOL)
+	
+					{
+						WARNING_MSG("Erreur de syntaxe du let!");
+						return input;
+					} 
+
+					if(circulation->this.pair.car->this.pair.cdr->this.pair.car->type==SFS_SYMBOL)
+					{
+						printf("%d",circulation->this.pair.car->this.pair.cdr->this.pair.car->type);
+						printf("%s",circulation->this.pair.car->this.pair.cdr->this.pair.car->this.symbol);
+						
+						p=recherche(env_courant,circulation->this.pair.car->this.pair.cdr->this.pair.car->this.symbol);
+						
+						if (p==NULL) WARNING_MSG("La variable n'est pas définie ! ");
+
+						else
+						{
+						
+						circulation->this.pair.car->this.pair.cdr->this.pair.car=p->this.pair.cdr;
+					
+						}	
+
+					}
+					
 					cons_var->this.pair.cdr=circulation->this.pair.car;
 					sfs_eval(cons_var,env_courant);
 					circulation=circulation->this.pair.cdr;
 				}
 
+
+				WARNING_MSG("Bonjour!");
 				input->this.pair.car->type=SFS_SYMBOL;
 				strcpy(input->this.pair.car->this.symbol,"begin");
 				circulation = sfs_eval(input,env_courant);
