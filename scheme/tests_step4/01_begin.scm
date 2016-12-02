@@ -13,9 +13,5 @@
     (define hyp (* x x))
     (define sum (+ (* y y) (* z z)))
     (if (= hyp sum)
-	(quote "le carré de l'hypothénuse...")
-	)
-    )
-  )
-5 3 4
-)
+	(quote "le carré de l'hypothénuse..."))))
+ 5 3 4)
