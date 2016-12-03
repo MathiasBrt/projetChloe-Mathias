@@ -269,10 +269,10 @@ object init_top_level(void){
 	strcpy(forme->this.symbol,"set-cdr!"); valeur->this.primitive=set_cdr;
 	env=ajout_queue_var(env,forme,valeur);
 	
-	strcpy(forme->this.symbol,"list!"); valeur->this.primitive=new_list;
+	strcpy(forme->this.symbol,"list"); valeur->this.primitive=new_list;
 	env=ajout_queue_var(env,forme,valeur);
 	
-	strcpy(forme->this.symbol,"eq?"); valeur->this.primitive=eq_poly;
+	strcpy(forme->this.symbol,"equal?"); valeur->this.primitive=eq_poly;
 	env=ajout_queue_var(env,forme,valeur);
 	
 	return env;

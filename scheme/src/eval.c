@@ -79,34 +79,36 @@ object sfs_eval( object input, object env_courant ) {
 
 		    }
 
-		/* Forme quote, elle n'évalue paas la l'expression, elle renvoie les arguments  */
+		/* Forme quote, elle n'évalue pas la l'expression, elle renvoie les arguments  */
 
 		if (strcmp(input->this.pair.car->this.symbol,"quote")==0)
-		    {
+		{
+
+
 			if (input->this.pair.cdr->type != SFS_NIL)
-			    {
+			{
 					
 				input = input->cadr;
 				return input;
 
-			    } 			
+			} 			
 
 			else WARNING_MSG (" Rien à recopier");
-		    }	
+		}	
 
 		/* forme begin */
 		if(strcmp(input->this.pair.car->this.symbol,"begin")==0)
-		    {
+		{
 			object resultat;
 
 			while(input->this.pair.cdr->type!=SFS_NIL)
-			    {
+			{
 				input=input->this.pair.cdr;
 				resultat=sfs_eval(input->this.pair.car,env_courant);
 
 					
-			    } return resultat;
-		    }
+			} return resultat;
+	 	}
 			
 		/* forme let */
 		if(strcmp(input->this.pair.car->this.symbol,"let")==0){

@@ -475,19 +475,38 @@ object sfs_read_atom( char *input, uint *here ) {
 
         if((int)input[*here]==39)
             {
+
                 char citation[256];
+                char resultat[256];
                 strcpy(citation,"(quote ");
 
-                while ((*here)<strlen(input))
+                if((int)input[*here+1]==40)
                 {
-
-                    input[*here]=input[(*here)+1];
-                    (*here)++;                    
+                    while ((int)input[*here]!= 41 && *here<strlen(input))
+                    {
+                       
+                        input[*here]=input[(*here)+1];
+                        resultat[*here]=input[*here];
+                        (*here)++;   
+                                   
+                    }
                 }
-                strcat(citation,input);
-                citation[strlen(citation)]=')';
-                
+
+                else 
+                {
+                     while ((int)input[*here]!= 32 && *here<strlen(input))
+                    {
+                      
+                        input[*here]=input[(*here)+1];
+                        resultat[*here]=input[*here];
+                        (*here)++;     
+                    }
+                }
+
+                strcat(citation,resultat); 
+                citation[strlen(citation)]=')'; 
                 (*here)=0;
+            
                 return sfs_read(citation,here);
 
             }

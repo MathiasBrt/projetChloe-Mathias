@@ -651,6 +651,7 @@ object eq_poly(object input, object env_courant)
 {
     object resultat=make_object(SFS_BOOLEAN);
 	
+	
 
     while(input->cddr->type!=SFS_NIL)
 	{	
