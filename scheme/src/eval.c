@@ -83,8 +83,7 @@ object sfs_eval( object input, object env_courant ) {
 
 		if (strcmp(input->this.pair.car->this.symbol,"quote")==0)
 		{
-
-
+			
 			if (input->this.pair.cdr->type != SFS_NIL)
 			{
 					
