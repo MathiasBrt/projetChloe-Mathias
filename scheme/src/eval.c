@@ -32,7 +32,12 @@ object sfs_eval( object input, object env_courant ) {
 
 		if(input->this.pair.car->type==SFS_COMPOUND)
 	 	{
-			env_courant=ajout_tete_env(env_courant);
+	 		if(input->this.pair.car->this.compound.env==env_courant){
+	 			env_courant=ajout_tete_env(env_courant);
+	 		}
+	 		else{
+	 			env_courant=input->this.pair.car->this.compound.env;
+			}
 			object p=input->this.pair.car->this.compound.parms;
 			object q=input->this.pair.cdr;
 			object agregat=association(env_courant,input->this.pair.car);
@@ -45,8 +50,12 @@ object sfs_eval( object input, object env_courant ) {
 			    }while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
 
 			object resultat = sfs_eval(agregat->this.compound.body,env_courant);
-			env_courant=env_courant->env_suiv;
-
+			if(input->this.pair.car->this.compound.env==env_courant){
+	 			env_courant=env_courant->env_suiv;
+	 		}
+	 		else{
+	 			input->this.pair.car->this.compound.env=env_courant->env_suiv;
+			}
 			return resultat;
 	    }
 
