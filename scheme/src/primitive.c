@@ -651,7 +651,7 @@ object eq_poly(object input, object env_courant)
 {
     object resultat=make_object(SFS_BOOLEAN);
 	
-	
+
 
     while(input->cddr->type!=SFS_NIL)
 	{	
@@ -694,6 +694,7 @@ object eq_poly(object input, object env_courant)
 				    resultat->this.boolean=FALSE;
 				    return resultat;
 				}break;
+
 				
 			case 0x04 :
 			    resultat->this.boolean=TRUE;

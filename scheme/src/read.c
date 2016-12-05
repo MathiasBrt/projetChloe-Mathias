@@ -105,6 +105,7 @@ typedef enum {
     FINISHED        /* on a trouve une S-Expr bien formee */
 } EXPRESSION_TYPE_T;
 
+
 uint  sfs_get_sexpr( char *input, FILE *fp ) {
     int       parlevel = 0;
     uint      in_string = FALSE;
@@ -172,7 +173,7 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
         }
 
         /* si la ligne est inutile 
-        	=> on va directement à la prochaine iteration */
+            => on va directement à la prochaine iteration */
         if (first_usefull_char(chunk) == NULL) {
             continue;
         }
@@ -243,7 +244,7 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
                             if(typeOfExpressionFound == BASIC_ATOME) {
                                 typeOfExpressionFound = FINISHED;
                             }
-                        } else if(typeOfExpressionFound != S_EXPR_PARENTHESIS && (int)chunk[i]!=39) {
+                        } else if(typeOfExpressionFound != S_EXPR_PARENTHESIS) {
                             typeOfExpressionFound = BASIC_ATOME;
                         }
                     }
@@ -292,6 +293,7 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
     }
     return S_OK;
 }
+
 
 
 /*

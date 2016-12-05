@@ -22,102 +22,101 @@ object sfs_eval( object input, object env_courant ) {
 	
 
   eval:
-    /*Dans le cas s'une paire*/
-    if(input->type==SFS_PAIR){
-	if(input->this.pair.car->type==SFS_PAIR)
+    /*Dans le cas d'une paire*/
+    if(input->type==SFS_PAIR)
+    {
+		if(input->this.pair.car->type==SFS_PAIR)
 	    {
-		input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
+			input->this.pair.car=sfs_eval(input->this.pair.car,env_courant);
 	    }
 
-	if(input->this.pair.car->type==SFS_COMPOUND)
-	    {
-		env_courant=ajout_tete_env(env_courant);
-		object p=input->this.pair.car->this.compound.parms;
-		object q=input->this.pair.cdr;
-		object agregat=association(env_courant,input->this.pair.car);
+		if(input->this.pair.car->type==SFS_COMPOUND)
+	 	{
+			env_courant=ajout_tete_env(env_courant);
+			object p=input->this.pair.car->this.compound.parms;
+			object q=input->this.pair.cdr;
+			object agregat=association(env_courant,input->this.pair.car);
 
-		do
+			do
 		    {
-			env_courant=ajout_queue_var(env_courant,p->this.pair.car,sfs_eval(q->this.pair.car,env_courant));
-			p=p->this.pair.cdr;
-			q=q->this.pair.cdr;
-		    }while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
+				env_courant=ajout_queue_var(env_courant,p->this.pair.car,sfs_eval(q->this.pair.car,env_courant));
+				p=p->this.pair.cdr;
+				q=q->this.pair.cdr;
+			    }while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
 
-		object resultat = sfs_eval(agregat->this.compound.body,env_courant);
-		env_courant=env_courant->env_suiv;
-			
+			object resultat = sfs_eval(agregat->this.compound.body,env_courant);
+			env_courant=env_courant->env_suiv;
 
-		return resultat;
+			return resultat;
 	    }
 
-	/*Test si le car est un symbol*/
-	if(input->this.pair.car->type==SFS_SYMBOL)
+		/*Test si le car est un symbol*/
+		if(input->this.pair.car->type==SFS_SYMBOL)
 	    {
-		/*Recherche dans l'environnement courant*/
-		p=recherche(env_courant,input->this.pair.car->this.symbol);
-				
-		if(p==NULL) return input; /*Renvoie l'entrée si le symbol n'existe pas*/
+			/*Recherche dans l'environnement courant*/
+			p=recherche(env_courant,input->this.pair.car->this.symbol);
+		
+			if(p==NULL) return input; /*Renvoie l'entrée si le symbol n'existe pas*/
 
-		/* Teste si le cdr est une primitive */
-		if(p->this.pair.cdr->type==SFS_PRIMITIVE)
+			/* Teste si le cdr est une primitive */
+			if(p->this.pair.cdr->type==SFS_PRIMITIVE)
 		    {
-			object (*prim)(object,object); /* Pointeur de fonction */
-			prim = p->this.pair.cdr->this.primitive; /* Association de la fonction */
-			return prim(input, env_courant);
+				object (*prim)(object,object); /* Pointeur de fonction */
+				prim = p->this.pair.cdr->this.primitive; /* Association de la fonction */
+				return prim(input, env_courant);
 		    }
-		/* Teste si le cdr est un agregat */
-		if(p->this.pair.cdr->type==SFS_COMPOUND){
-		    input->this.pair.car=association(env_courant,input->this.pair.car);
+			/* Teste si le cdr est un agregat */
+			if(p->this.pair.cdr->type==SFS_COMPOUND)
+			{
+		    	input->this.pair.car=association(env_courant,input->this.pair.car);
 		    goto eval;
-		}
+			}
 
-		/* Test de la gestion de casse => Forme écrite obligatoirement en minuscule */
-		if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
-		    {
-			WARNING_MSG("La forme est certainement en majuscule !");
-			return input;
-
+			/* Test de la gestion de casse => Forme écrite obligatoirement en minuscule */
+			if(!strcmp(input->this.pair.car->this.symbol,"IF") || !strcmp(input->this.pair.car->this.symbol,"AND") || !strcmp(input->this.pair.car->this.symbol,"DEFINE") || !strcmp(input->this.pair.car->this.symbol,"OR") || !strcmp(input->this.pair.car->this.symbol,"SET!") || !strcmp(input->this.pair.car->this.symbol,"QUOTE"))
+		 	{
+				WARNING_MSG("La forme est certainement en majuscule !");
+				return input;
 		    }
 
-		/* Forme quote, elle n'évalue pas la l'expression, elle renvoie les arguments  */
+			/* Forme quote, elle n'évalue pas la l'expression, elle renvoie les arguments  */
 
-		if (strcmp(input->this.pair.car->this.symbol,"quote")==0)
-		{
-			
-			if (input->this.pair.cdr->type != SFS_NIL)
+			if (strcmp(input->this.pair.car->this.symbol,"quote")==0)
 			{
+			
+				if (input->this.pair.cdr->type != SFS_NIL)
+				{
 					
-				input = input->cadr;
-				return input;
+					input = input->cadr;
+					return input;
 
-			} 			
+				} 			
 
-			else WARNING_MSG (" Rien à recopier");
-		}	
+				else WARNING_MSG (" Rien à recopier");
+			}	
 
-		/* forme begin */
-		if(strcmp(input->this.pair.car->this.symbol,"begin")==0)
-		{
-			object resultat;
-
-			while(input->this.pair.cdr->type!=SFS_NIL)
+			/* forme begin */
+			if(strcmp(input->this.pair.car->this.symbol,"begin")==0)
 			{
-				input=input->this.pair.cdr;
-				resultat=sfs_eval(input->this.pair.car,env_courant);
+				object resultat;
 
+				while(input->this.pair.cdr->type!=SFS_NIL)
+				{
+					input=input->this.pair.cdr;
+					resultat=sfs_eval(input->this.pair.car,env_courant);
+
+				} return resultat;
+	 		}
+			
+			/* forme let */
+			if(strcmp(input->this.pair.car->this.symbol,"let")==0){
+			
+			    if(input->this.pair.cdr->type==SFS_NIL)
+				{
+				    WARNING_MSG("Erreur de syntaxe du let");
+				    return input;
+				}
 					
-			} return resultat;
-	 	}
-			
-		/* forme let */
-		if(strcmp(input->this.pair.car->this.symbol,"let")==0){
-			
-		    if(input->this.pair.cdr->type==SFS_NIL)
-			{
-			    WARNING_MSG("Erreur de syntaxe du let");
-			    return input;
-			}
-				
 		    input=input->this.pair.cdr;
 		    env_courant=ajout_tete_env(env_courant);
 		    object cons_var = make_object(SFS_PAIR);
@@ -412,17 +411,30 @@ object sfs_eval( object input, object env_courant ) {
 		return input;
 	    }
     }
-    /*Renvoie la valeur de la variable, si elle existe*/
-    if(input->type==SFS_SYMBOL){
-	p=recherche(env_courant,input->this.symbol);
-	if (p==NULL) {
-	    WARNING_MSG("Variable non liée");
-	    return input;
-	}
-	return p->this.pair.cdr;
+
+     /*Renvoie la valeur de la variable, si elle existe*/
+    if(input->type==SFS_SYMBOL)
+    {
+    	
+		p=recherche(env_courant,input->this.symbol);
+		if (p==NULL) {
+	    	WARNING_MSG("Variable non liée");
+	   	 return input;
+		}
+
+		if (strcmp(input->this.symbol,"+")==0 || strcmp(input->this.symbol,"-")==0 || strcmp(input->this.symbol,"*")==0 || strcmp(input->this.symbol,"/")==0 )
+		{
+			
+			return p->this.pair.car;
+		}
+
+		return p->this.pair.cdr;
     }
+
     return input;
+
 }
+
 
 BOOL predicat(object input, object env_courant){
     input=sfs_eval(input,env_courant);

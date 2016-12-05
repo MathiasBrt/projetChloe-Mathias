@@ -48,9 +48,10 @@ void sfs_print_atom( object o ) {
 
         case SFS_PRIMITIVE:
              break;
+             
         case SFS_COMPOUND:
-            printf("parms : "); sfs_print(o->this.compound.parms);
-            printf("\nbody : "); sfs_print(o->this.compound.body);
+            /*printf("parms : "); sfs_print(o->this.compound.parms);
+            printf("\nbody : "); sfs_print(o->this.compound.body);*/
             break;
     }
     return;
