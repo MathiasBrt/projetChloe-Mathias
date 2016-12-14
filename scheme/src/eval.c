@@ -32,12 +32,17 @@ object sfs_eval( object input, object env_courant ) {
 
 		if(input->this.pair.car->type==SFS_COMPOUND)
 	 	{
-	 		if(input->this.pair.car->this.compound.env==env_courant){
+	 		if(input->this.pair.car->this.compound.env==env_courant)
+			{
 	 			env_courant=ajout_tete_env(env_courant);
 	 		}
-	 		else{
+
+	 		else
+	 		{
 	 			env_courant=input->this.pair.car->this.compound.env;
+	 			 
 			}
+	 		
 			object p=input->this.pair.car->this.compound.parms;
 			object q=input->this.pair.cdr;
 			object agregat=association(env_courant,input->this.pair.car);
@@ -47,15 +52,21 @@ object sfs_eval( object input, object env_courant ) {
 				env_courant=ajout_queue_var(env_courant,p->this.pair.car,sfs_eval(q->this.pair.car,env_courant));
 				p=p->this.pair.cdr;
 				q=q->this.pair.cdr;
-			    }while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
+
+			}while(q->this.pair.car->type==SFS_NUMBER || q->this.pair.car->type==SFS_PAIR);
 
 			object resultat = sfs_eval(agregat->this.compound.body,env_courant);
-			if(input->this.pair.car->this.compound.env==env_courant){
+
+			if(input->this.pair.car->this.compound.env==env_courant)
+			{
 	 			env_courant=env_courant->env_suiv;
 	 		}
-	 		else{
+	 		else
+	 		{
 	 			input->this.pair.car->this.compound.env=env_courant->env_suiv;
+	 			 
 			}
+
 			return resultat;
 	    }
 
@@ -225,6 +236,7 @@ object sfs_eval( object input, object env_courant ) {
 
 			return agregat;
 		    }
+
 		/* forme and */
 		if(strcmp(input->this.pair.car->this.symbol,"and")==0)
 		    {
@@ -370,6 +382,7 @@ object sfs_eval( object input, object env_courant ) {
 					return input;
 				    }
 				    /* On va transformer l'arbre pour faire apparaitre une structure analogue à lambda */
+
 				    p=recherche_env(env_courant,input->caadr->this.symbol);
 				    if(p==NULL){
 					object cons_lambda = make_object(SFS_PAIR);
@@ -415,7 +428,6 @@ object sfs_eval( object input, object env_courant ) {
 			return env_courant;
 
 		    }
-			
 		
 		return input;
 	    }

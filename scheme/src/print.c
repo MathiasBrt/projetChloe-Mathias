@@ -52,7 +52,7 @@ void sfs_print_atom( object o ) {
         case SFS_COMPOUND:
             printf("parms : "); sfs_print(o->this.compound.parms);
             printf("\nbody : "); sfs_print(o->this.compound.body);
-            printf("\nenvironnement de définition : "); sfs_print(o->this.compound.env);
+            /*printf("\nenvironnement de définition : "); sfs_print(o->this.compound.env);*/
             break;
     }
     return;
