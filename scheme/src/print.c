@@ -19,39 +19,40 @@ object toplevel;
  * Elle vérifie le type de l'objet en paramètre et met en forme l'expression à afficher (avec la syntaxe de SCHEME).
  */
 
-void sfs_print_atom( object o ) {
+void sfs_print_atom( object o )
+{
     switch (o->type){
-        case SFS_BOOLEAN:
-            /*printf("booleen:  ");*/
-            (o->this.boolean) ? printf("#t"):printf("#f"); break;
-        case SFS_CHARACTER:
-            /*printf("lettre: ");*/ 
-            if(o->this.character==32) printf("#\\space");
-            else if(o->this.character==10) printf("#\\newline");
-            else printf("#\\%c",o->this.character); break;
-        case SFS_NUMBER:
-            /*printf("nombre: ");*/
-          /*  if (o->this.number.numtype==NUM_MINFTY) printf("-inf");
+    case SFS_BOOLEAN:
+	/*printf("booleen:  ");*/
+	(o->this.boolean) ? printf("#t"):printf("#f"); break;
+    case SFS_CHARACTER:
+	/*printf("lettre: ");*/ 
+	if(o->this.character==32) printf("#\\space");
+	else if(o->this.character==10) printf("#\\newline");
+	else printf("#\\%c",o->this.character); break;
+    case SFS_NUMBER:
+	/*printf("nombre: ");*/
+	/*  if (o->this.number.numtype==NUM_MINFTY) printf("-inf");
             else if (o->this.number.numtype==NUM_PINFTY) printf("+inf");*/
-            /*else*/ printf("%d",o->this.number.this.integer); break;
-        case SFS_SYMBOL:
-            /*printf("symbole: ");*/
-            printf("%s",o->this.symbol); break;
-        case SFS_STRING:
-            /*printf("chaine: ");*/
-            printf("\"%s\"",o->this.string); break;
-        case SFS_NIL:
-        	printf(")"); break;
+	/*else*/ printf("%d",o->this.number.this.integer); break;
+    case SFS_SYMBOL:
+	/*printf("symbole: ");*/
+	printf("%s",o->this.symbol); break;
+    case SFS_STRING:
+	/*printf("chaine: ");*/
+	printf("\"%s\"",o->this.string); break;
+    case SFS_NIL:
+	printf(")"); break;
 
-        case SFS_ENVIRONNEMENT :
-            affiche_env(o);
+    case SFS_ENVIRONNEMENT :
+	affiche_env(o);
 
-        case SFS_PRIMITIVE:
-             break;
+    case SFS_PRIMITIVE:
+	break;
              
-        case SFS_COMPOUND:
+    case SFS_COMPOUND:
                 
-            break;
+	break;
     }
     return;
 }
@@ -64,10 +65,11 @@ void sfs_print_atom( object o ) {
  * (cdr de type SFS_NIL), on se prépare à écrire par-dessus cet espace.
  */
 
-void sfs_print_pair( object o ) {
+void sfs_print_pair( object o )
+{
     sfs_print(o->this.pair.car);
     if (o->this.pair.cdr->type!=SFS_NIL)
-    printf(" ");
+	printf(" ");
     sfs_print(o->this.pair.cdr);
     return;
 }
@@ -78,22 +80,21 @@ void sfs_print_pair( object o ) {
  * Elle gère l'affichage des parenthèses ouvrantes.
  */
 
-void sfs_print( object o ) {
-
-	if (!premiere_parenthese && SFS_NIL==o->type) printf("(");
-  
-    if ( SFS_PAIR == o->type ) {
-    	if (!premiere_parenthese){
-    		premiere_parenthese++;
-    		printf("(");
+void sfs_print( object o )
+{
+    if (!premiere_parenthese && SFS_NIL==o->type) printf("(");
+    if ( SFS_PAIR == o->type )
+    {
+    	if (!premiere_parenthese)
+	{
+	    premiere_parenthese++;
+	    printf("(");
     	} 
-        
     	if (o->this.pair.car->type==SFS_PAIR || o->this.pair.car->type==SFS_NIL) printf("(");
         sfs_print_pair( o );
-
     }
-
-    else {
+    else
+    {
         sfs_print_atom( o ); 
     }
 }

@@ -12,7 +12,8 @@
 #include "mem.h"
 
 
-object make_object( uint type ) {
+object make_object( uint type )
+{
 
     object t = sfs_malloc( sizeof( *t ) );
 
@@ -21,7 +22,8 @@ object make_object( uint type ) {
     return t;
 }
 
-object make_nil( void ) {
+object make_nil( void )
+{
 
     object t = make_object( SFS_NIL );
 

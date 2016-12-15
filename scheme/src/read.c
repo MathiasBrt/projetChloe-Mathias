@@ -305,23 +305,29 @@ uint  sfs_get_sexpr( char *input, FILE *fp ) {
  * Si on lit une parenthese ouvrante, sfs_read_pair est appelée.
  * Sinon, c'est sfs_read_atom.
  */
-object sfs_read( char *input, uint *here ) {
+object sfs_read( char *input, uint *here )
+{
     while ( input[*here] == ' ' || (int)input[*here]==9) (*here)++;
-    if ( input[*here] == '(' ) {
+    if ( input[*here] == '(' )
+    {
     	(*here)++;
     	while ( input[*here] == ' ' || (int)input[*here]==9 ) (*here)++;
-        if ( input[(*here)] == ')' ) {
+        if ( input[(*here)] == ')' )
+	{
             *here += 1;
             return nil;
         }
-        else {
+        else
+	{
             return sfs_read_pair( input, here );
         }
     }
-    if  ( input[*here] == ')' ) {
+    if  ( input[*here] == ')' )
+    {
         return nil;
     }
-    else {
+    else
+    {
         return sfs_read_atom( input, here );
     }
 }
@@ -334,63 +340,70 @@ object sfs_read( char *input, uint *here ) {
  * À la fin d'une lecture, here pointe sur le caractere de input qui suit l'atome lu.
  */
 
-object sfs_read_atom( char *input, uint *here ) {
-
+object sfs_read_atom( char *input, uint *here )
+{
     object atom = NULL;
     int ascii = (int) input[*here];
     string buffer;
     int buffer_counter=0;
     int echappement=0; /* concerne l'echappement de \ */
-    
     /* lecture d'un ; (commentaire) */
-    if (ascii==59){
+    if (ascii==59)
+    {
     	while (input[(*here)!='\n']) (*here)++;
     	
     }
-    
 
     /* lecture d'un # */
-    if (ascii==35){
-        if (input[((*here)+1)]=='t' || input[((*here)+1)]=='f'){
+    if (ascii==35)
+    {
+        if (input[((*here)+1)]=='t' || input[((*here)+1)]=='f')
+	{
             (*here)+=2;
-            if(input[(*here)]=='\0' || input[(*here)]==' ' || (int)input[(*here)]==9 || input[*(here)]==')'){
+            if(input[(*here)]=='\0' || input[(*here)]==' ' || (int)input[(*here)]==9 || input[*(here)]==')')
+	    {
                 atom = make_object(SFS_BOOLEAN);
                 atom->this.boolean= (input[(*here)-1]=='t') ? TRUE:FALSE;
             }
             else WARNING_MSG( "Could not read valid atom expression" );
             return atom;
         }
-        if (input[((*here)+1)=='\\']){
-            
+        if (input[((*here)+1)=='\\'])
+	{
             atom = make_object(SFS_CHARACTER);
             (*here)+=2;
-            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && (int)input[(*here)]!=41){
-                 
-                 buffer[buffer_counter]=input[*here];
-                 buffer_counter++;
-                 (*here)++;
+            while(*here<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && (int)input[(*here)]!=41)
+	    {
+		buffer[buffer_counter]=input[*here];
+		buffer_counter++;
+		(*here)++;
             }
-            if(buffer_counter==0 && (int)input[(*here)]==41){
-                 buffer[buffer_counter]=input[*here];
-                 buffer_counter++;
-                 (*here)++;
+            if(buffer_counter==0 && (int)input[(*here)]==41)
+	    {
+		buffer[buffer_counter]=input[*here];
+		buffer_counter++;
+		(*here)++;
             } 
-            if (buffer_counter==0){
-                 WARNING_MSG( "Could not read valid atom expression" );
-                 return nil;
+            if (buffer_counter==0)
+	    {
+		WARNING_MSG( "Could not read valid atom expression" );
+		return nil;
             }
-            if (buffer_counter==1){
-                 atom->this.character=buffer[0]; /* un seul caractere lu */
-                 return atom;
+            if (buffer_counter==1)
+	    {
+		atom->this.character=buffer[0]; /* un seul caractere lu */
+		return atom;
             }
-            if (buffer_counter>1){
-                 if (!strncmp(buffer,"space",buffer_counter)) atom->this.character=32; /* ascii de space */
-                 else if (!strncmp(buffer,"newline",buffer_counter)) atom->this.character=10; /* ascii de newline */
-                 else {
-                     WARNING_MSG( "Could not read valid atom expression" );
-                     return nil;
-                 }
-                 return atom;
+            if (buffer_counter>1)
+	    {
+		if (!strncmp(buffer,"space",buffer_counter)) atom->this.character=32; /* ascii de space */
+		else if (!strncmp(buffer,"newline",buffer_counter)) atom->this.character=10; /* ascii de newline */
+		else
+		{
+		    WARNING_MSG( "Could not read valid atom expression" );
+		    return nil;
+		}
+		return atom;
             }
         }
         else WARNING_MSG( "Could not read valid atom expression" );
@@ -398,25 +411,31 @@ object sfs_read_atom( char *input, uint *here ) {
     }
 
     /* lecture de " */
-    if (ascii==34){
+    if (ascii==34)
+    {
         (*here)++;
-        while(*here<strlen(input)){
+        while(*here<strlen(input))
+	{
             buffer[buffer_counter]=input[*here];
             if (input[*here]=='\\') echappement++;
             if (input[*here]!='\\' && echappement) echappement--; 
-            if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]!='\\'){ /* si guillemets non echappees */
+            if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]!='\\')  /* si guillemets non echappees */
+	    {
                 atom=make_object(SFS_STRING);
                 buffer[buffer_counter]='\0';
                 strncpy(atom->this.string,buffer,strlen(buffer));
                 (*here)++;
                 return atom;
             }
-            else if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]=='\\'){ /* si guillemets echappees */
-                if (!echappement){
+            else if (buffer[buffer_counter]=='"' && buffer[buffer_counter-1]=='\\')  /* si guillemets echappees */
+	    {
+                if (!echappement)
+		{
                     buffer_counter--;
                     buffer[buffer_counter]='"';
                 }
-                else {
+                else
+		{
                     atom=make_object(SFS_STRING);
                     buffer[buffer_counter]='\0';
                     strncpy(atom->this.string,buffer,strlen(buffer));
@@ -432,96 +451,92 @@ object sfs_read_atom( char *input, uint *here ) {
     /* lecture d'un +, d'un - ou d'un chiffre */
     if (((ascii==43 || ascii==45) && (input[*here+1]!=' ' && (int)input[(*here+1)]!=9 && (int)input[(*here+1)]!=41) ) || (ascii>= 48 && ascii<=57))
     {
-
     	buffer[buffer_counter]=input[*here];
     	buffer_counter++;
         (*here)++;
-        while((*here)<strlen(input) && (int)input[(*here)]!=32 && (int)input[(*here)]!=9 && (int)input[(*here)]!=41 &&(int)input[(*here)]!=40 && (int)input[(*here)]!=34)
+        while((*here)<strlen(input) &&
+	      (int)input[(*here)]!=32 &&
+	      (int)input[(*here)]!=9 &&
+	      (int)input[(*here)]!=41 &&
+	      (int)input[(*here)]!=40 &&
+	      (int)input[(*here)]!=34)
         {
-        	
             if((int)input[(*here)]< 48 || (int)input[(*here)]>57)
             {
                 WARNING_MSG( "Ce n'est pas un nombre" ); 
                 return nil;
             } 
-        buffer[buffer_counter]=input[*here];
-        buffer_counter++;
-        (*here)++;    
+	    buffer[buffer_counter]=input[*here];
+	    buffer_counter++;
+	    (*here)++;    
         }
-			if((int)input[(*here)-1]==43){
-        		atom = make_object(SFS_SYMBOL);
-        		strcpy(atom->this.symbol,"+");
-        		return atom;
-        	}
-        	if((int)input[(*here)-1]==45){
-        		atom = make_object(SFS_SYMBOL);
-        		strcpy(atom->this.symbol,"-");
-        		return atom;
-        	}
-            num nombre;
-            nombre.this.integer=atoi(buffer);
-            /*if((nombre.this.integer==-1 || nombre.this.integer==0) && buffer_counter>2){
-            	atom = make_object(SFS_NUMBER);
-            	atom->this.number=nombre;
-            	atom->this.number.numtype= (nombre.this.integer==0) ? NUM_MINFTY:NUM_PINFTY;
-            	return atom;
-            }*/
-            atom = make_object( SFS_NUMBER ) ; 
-            atom->this.number=nombre;
-            return atom;
+	if((int)input[(*here)-1]==43)
+	{
+	    atom = make_object(SFS_SYMBOL);
+	    strcpy(atom->this.symbol,"+");
+	    return atom;
+	}
+	if((int)input[(*here)-1]==45)
+	{
+	    atom = make_object(SFS_SYMBOL);
+	    strcpy(atom->this.symbol,"-");
+	    return atom;
+	}
+	num nombre;
+	nombre.this.integer=atoi(buffer);
+	/*if((nombre.this.integer==-1 || nombre.this.integer==0) && buffer_counter>2){
+	  atom = make_object(SFS_NUMBER);
+	  atom->this.number=nombre;
+	  atom->this.number.numtype= (nombre.this.integer==0) ? NUM_MINFTY:NUM_PINFTY;
+	  return atom;
+	  }*/
+	atom = make_object( SFS_NUMBER ) ; 
+	atom->this.number=nombre;
+	return atom;
     }
 
     /* autre cas : lecture d'un caractère isolé i.e. un symbole */
     else {
         atom=make_object(SFS_SYMBOL);
-
         if((int)input[*here]==39)
-            {
-
-                char citation[256];
-                char resultat[256];
-                strcpy(citation,"(quote ");
-
-                if((int)input[*here+1]==40)
-                {
-                    while ((int)input[*here]!= 41 && *here<strlen(input))
-                    {
-                       
-                        input[*here]=input[(*here)+1];
-                        resultat[*here]=input[*here];
-                        (*here)++;   
-                                   
-                    }
-                }
-
-                else 
-                {
-                     while ((int)input[*here]!= 32 && *here<strlen(input))
-                    {
-                      
-                        input[*here]=input[(*here)+1];
-                        resultat[*here]=input[*here];
-                        (*here)++;     
-                    }
-                }
-
-                strcat(citation,resultat); 
-                citation[strlen(citation)]=')'; 
-                (*here)=0;
-            
-                return sfs_read(citation,here);
-
-            }
+	{
+	    char citation[256];
+	    char resultat[256];
+	    strcpy(citation,"(quote ");
+	    if((int)input[*here+1]==40)
+	    {
+		while ((int)input[*here]!= 41 && *here<strlen(input))
+		{
+		    input[*here]=input[(*here)+1];
+		    resultat[*here]=input[*here];
+		    (*here)++;   
+		}
+	    }
+	    else 
+	    {
+		while ((int)input[*here]!= 32 && *here<strlen(input))
+		{
+		    input[*here]=input[(*here)+1];
+		    resultat[*here]=input[*here];
+		    (*here)++;     
+		}
+	    }
+	    strcat(citation,resultat); 
+	    citation[strlen(citation)]=')'; 
+	    (*here)=0;
+	    return sfs_read(citation,here);
+	}
         else 
         {   
-            while((*here)<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')'){
+            while((*here)<strlen(input) && input[*here]!=' ' && (int)input[(*here)]!=9 && input[*here]!=')')
+	    {
                 buffer[buffer_counter]=input[*here];
                 buffer_counter++;
                 (*here)++;
             }
-        buffer[buffer_counter]='\0';
-        strcpy(atom->this.symbol,buffer);
-        return atom;
+	    buffer[buffer_counter]='\0';
+	    strcpy(atom->this.symbol,buffer);
+	    return atom;
         }
     }
     return nil;
@@ -537,20 +552,20 @@ object sfs_read_atom( char *input, uint *here ) {
  * À la fin, here pointe sur le caractere qui suit une parenthese fermante (fin d'une paire).
  */
 
-object sfs_read_pair( char *input, uint *here ) {
-
+object sfs_read_pair( char *input, uint *here )
+{
     object pair = NULL;
     pair = make_object(SFS_PAIR);
     pair->this.pair.cdr=nil;
     pair->this.pair.car=nil;
     pair->this.pair.car=sfs_read(input,here);
     while (input[*here]==' ' || (int)input[*here]==9) (*here)++;
-    if (input[*here]!=')'){
-    	
+    if (input[*here]!=')')
+    {
     	pair->this.pair.cdr=sfs_read_pair(input,here);
     	return pair;
-   	}
-   	(*here)++;
+    }
+    (*here)++;
     return pair;
 }
 
