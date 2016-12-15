@@ -32,24 +32,37 @@ object sfs_eval( object input, object env_courant ) {
 
 		if(input->this.pair.car->type==SFS_COMPOUND)
 	 	{
-	 		if(input->this.pair.car->this.compound.env==env_courant)
+	 		if(input->this.pair.car->this.compound.env==toplevel)
 			{
 	 			env_courant=ajout_tete_env(env_courant);
 	 		}
-
 	 		else
 	 		{
-	 			env_courant=input->this.pair.car->this.compound.env;
-	 			 
+	 			env_courant=input->this.pair.car->this.compound.env;	 
 			}
-	 		
+
 			object p=input->this.pair.car->this.compound.parms;
 			object q=input->this.pair.cdr;
 			object agregat=association(env_courant,input->this.pair.car);
+			object bonjour=creer_env();
 
 			do
 		    {
+
+		    	bonjour=recherche_env(env_courant,p->this.pair.car->this.symbol);
+
+		    	if (bonjour==NULL)
+		    	{
+		    	
 				env_courant=ajout_queue_var(env_courant,p->this.pair.car,sfs_eval(q->this.pair.car,env_courant));
+				
+				}
+
+				else 
+				{
+				bonjour->this.pair.cdr->this.number.this.integer=sfs_eval(q->this.pair.car,env_courant)->this.number.this.integer;
+				}
+
 				p=p->this.pair.cdr;
 				q=q->this.pair.cdr;
 
@@ -57,14 +70,13 @@ object sfs_eval( object input, object env_courant ) {
 
 			object resultat = sfs_eval(agregat->this.compound.body,env_courant);
 
-			if(input->this.pair.car->this.compound.env==env_courant)
+			if(input->this.pair.car->this.compound.env==toplevel)
 			{
 	 			env_courant=env_courant->env_suiv;
 	 		}
 	 		else
 	 		{
-	 			input->this.pair.car->this.compound.env=env_courant->env_suiv;
-	 			 
+	 			input->this.pair.car->this.compound.env=env_courant->env_suiv;	 
 			}
 
 			return resultat;
@@ -167,8 +179,6 @@ object sfs_eval( object input, object env_courant ) {
 
 			    if(circulation->this.pair.car->this.pair.cdr->this.pair.car->type==SFS_SYMBOL)
 				{
-				    printf("%d",circulation->this.pair.car->this.pair.cdr->this.pair.car->type);
-				    printf("%s",circulation->this.pair.car->this.pair.cdr->this.pair.car->this.symbol);
 						
 				    p=recherche(env_courant,circulation->this.pair.car->this.pair.cdr->this.pair.car->this.symbol);
 						
@@ -416,18 +426,17 @@ object sfs_eval( object input, object env_courant ) {
 
 		/* forme set! */
 		if(!strcmp(input->this.pair.car->this.symbol,"set!"))
-		    {
+		{
 			object p=creer_env();
 			p=recherche_env(env_courant,input->cadr->this.symbol); /*idem : une var peut être dans 2 env*/
 			if(p==NULL) WARNING_MSG("La variable n'est pas définie");
 			else 
-			    {
+			{
 				p->this.pair.cdr=sfs_eval(input->caddr,env_courant);
-				return env_courant;
-			    }
-			return env_courant;
-
-		    }
+				return sfs_eval(input->cadr,env_courant);;
+			}
+			return input;
+		}
 		
 		return input;
 	    }
