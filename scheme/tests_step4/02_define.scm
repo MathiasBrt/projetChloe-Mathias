@@ -9,3 +9,6 @@
 (g (f 4) 5)
 (f (f (f 3)))
 (begin (define (fcarre proc args) (proc args)) (fcarre f 1))
+(define (h x y) (* x x))
+(h 3 4)
+
